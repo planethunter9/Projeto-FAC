@@ -9,7 +9,7 @@ bool phonePickedUp = false;
 
 void setup() {
   delay(500);
-  SerialUSB.begin(9600);
+  Serial.begin(115200);
 
   pinMode(LEDR, OUTPUT);
   pinMode(LEDG, OUTPUT);
@@ -21,12 +21,12 @@ void setup() {
   digitalWrite(LEDB, HIGH);
 
   if (!IMU.begin()) {
-    SerialUSB.println("Erro ao iniciar o IMU!");
+    Serial.println("Erro ao iniciar o IMU!");
     while (1);
   }
 
   // Calibração automática
-  SerialUSB.println("A calibrar... não mexas no Arduino!");
+  Serial.println("A calibrar... não mexas no Arduino!");
   float sumX = 0, sumY = 0, sumZ = 0;
   int count = 0;
 
@@ -46,7 +46,7 @@ void setup() {
   baseY = sumY / CALIBRATION_SAMPLES;
   baseZ = sumZ / CALIBRATION_SAMPLES;
 
-  SerialUSB.println("Calibração concluída! A monitorizar...");
+  Serial.println("Calibração concluída! A monitorizar...");
 }
 
 void loop() {
@@ -68,7 +68,7 @@ void loop() {
         digitalWrite(LEDG, LOW);
         digitalWrite(LEDB, LOW);
 
-        SerialUSB.println("DISTRACAO_INICIO");
+        Serial.println("DISTRACAO_INICIO");
       }
     } else {
       if (phonePickedUp) {
@@ -79,7 +79,7 @@ void loop() {
         digitalWrite(LEDG, HIGH);
         digitalWrite(LEDB, LOW);
 
-        SerialUSB.println("DISTRACAO_FIM");
+        Serial.println("DISTRACAO_FIM");
       }
     }
   }
