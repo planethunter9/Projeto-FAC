@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<title>Dashboard de Distrações</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', sans-serif; background: #0f172a; color: #e2e8f0; min-height: 100vh; }
+  header { background: #1e293b; padding: 20px 30px; border-bottom: 1px solid #334155; }
+  header h1 { font-size: 22px; color: #f8fafc; }
+  header p { color: #94a3b8; font-size: 13px; margin-top: 4px; }
+  .container { padding: 24px 30px; }
+  .cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+  .card { background: #1e293b; border-radius: 12px; padding: 20px; border: 1px solid #334155; }
+  .card .valor { font-size: 28px; font-weight: 700; margin-bottom: 4px; }
+  .card .label { font-size: 12px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; }
+  .card.red .valor { color: #f87171; }
+  .card.yellow .valor { color: #fbbf24; }
+  .card.blue .valor { color: #60a5fa; }
+  .card.purple .valor { color: #a78bfa; }
+  .filtros { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
+  .filtros span { color: #94a3b8; font-size: 13px; margin-right: 4px; }
+  .btn { padding: 8px 16px; border-radius: 8px; border: 1px solid #334155; background: #1e293b;
+          color: #94a3b8; cursor: pointer; font-size: 13px; transition: all 0.2s; }
+  .btn:hover { border-color: #60a5fa; color: #60a5fa; }
+  .btn.active { background: #2563eb; border-color: #2563eb; color: white; }
+  .graficos-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 16px; }
+  .grafico-box { background: #1e293b; border-radius: 12px; padding: 20px; border: 1px solid #334155; }
+  .grafico-box h3 { font-size: 14px; color: #94a3b8; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .graficos-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  .tabela-box { background: #1e293b; border-radius: 12px; padding: 20px; border: 1px solid #334155; margin-bottom: 16px; }
+  .tabela-box h3 { font-size: 14px; color: #94a3b8; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .filtro-dia { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+  .filtro-dia select { background: #0f172a; color: #e2e8f0; border: 1px solid #334155;
+                        padding: 6px 12px; border-radius: 8px; font-size: 13px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; padding: 10px 12px; color: #64748b; border-bottom: 1px solid #334155; font-weight: 500; }
+  td { padding: 10px 12px; border-bottom: 1px solid #1e293b; color: #cbd5e1; }
+  tr:hover td { background: #0f172a; }
+  .badge { padding: 2px 8px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+  .badge.curta { background: #064e3b; color: #6ee7b7; }
+  .badge.media { background: #78350f; color: #fcd34d; }
+  .badge.longa { background: #7f1d1d; color: #fca5a5; }
+  .toggle-theme { position: fixed; top: 20px; right: 20px; z-index: 999;
+    padding: 8px 16px; border-radius: 8px; border: 1px solid #334155;
+    background: #1e293b; color: #e2e8f0; cursor: pointer; font-size: 13px; }
+  body.light { background: #f1f5f9; color: #0f172a; }
+  body.light header { background: #ffffff; border-color: #e2e8f0; }
+  body.light header h1 { color: #0f172a; }
+  body.light header p { color: #64748b; }
+  body.light .card { background: #ffffff; border-color: #e2e8f0; }
+  body.light .btn { background: #ffffff; border-color: #e2e8f0; color: #64748b; }
+  body.light .btn.active { background: #2563eb; color: white; }
+  body.light .grafico-box { background: #ffffff; border-color: #e2e8f0; }
+  body.light .grafico-box h3 { color: #64748b; }
+  body.light .tabela-box { background: #ffffff; border-color: #e2e8f0; }
+  body.light .tabela-box h3 { color: #64748b; }
+  body.light .filtro-dia select { background: #f8fafc; color: #0f172a; border-color: #e2e8f0; }
+  body.light td { color: #334155; }
+  body.light tr:hover td { background: #f8fafc; }
+  body.light .toggle-theme { background: #ffffff; border-color: #e2e8f0; color: #0f172a; }
+</style>
+</head>
+<body>
+<button class="toggle-theme" onclick="toggleTheme()">☀️ Light Mode</button>
+<header>
+  <h1>Dashboard de Distrações no Estudo</h1>
+  <p>Sistema de monitorização com Arduino Nano RP2040 Connect</p>
+</header>
+<div class="container">
+  <div class="cards">
+    <div class="card red"><div class="valor">160</div><div class="label">Total de Distrações</div></div>
+    <div class="card yellow"><div class="valor">4h 44min</div><div class="label">Tempo Total Distraído</div></div>
+    <div class="card blue"><div class="valor">107s</div><div class="label">Duração Média</div></div>
+    <div class="card purple"><div class="valor">19h</div><div class="label">Hora com mais Distrações</div></div>
+  </div>
+  <div class="filtros">
+    <span>Ver por:</span>
+    <button class="btn active" onclick="setVista('dia', this)">Dia</button>
+    <button class="btn" onclick="setVista('semana', this)">Semana</button>
+    <button class="btn" onclick="setVista('mes', this)">Mês</button>
+  </div>
+  <div class="graficos-grid">
+    <div class="grafico-box"><h3 id="titulo-principal">Distrações por Dia</h3><canvas id="grafico-principal" height="120"></canvas></div>
+    <div class="grafico-box" style="display:flex; flex-direction:column;"><h3>A Que Horas Ocorrem?</h3><div style="flex:1; min-height:0;"><canvas id="grafico-horas"></canvas></div></div>
+  </div>
+  <div class="graficos-grid2">
+    <div class="grafico-box"><h3>Tempo Total Distraído por Dia (minutos)</h3><canvas id="grafico-duracao" height="120"></canvas></div>
+    <div class="grafico-box"><h3>Distrações por Semana</h3><canvas id="grafico-semana" height="120"></canvas></div>
+  </div>
+  <div class="tabela-box">
+    <h3>Registo Detalhado</h3>
+    <div class="filtro-dia">
+      <select id="select-dia" onchange="atualizarTabela()"><option value="">-- Todos os dias --</option></select>
+      <select id="select-tipo" onchange="atualizarTabela()">
+        <option value="">-- Todos os tipos --</option>
+        <option value="curta">Rápida (&lt;30s)</option>
+        <option value="media">Média (30s–2min)</option>
+        <option value="longa">Longa (&gt;2min)</option>
+      </select>
+    </div>
+    <table>
+      <thead><tr><th>Data</th><th>Hora Início</th><th>Hora Fim</th><th>Duração</th><th>Tipo</th></tr></thead>
+      <tbody id="tabela-body"></tbody>
+    </table>
+  </div>
+</div>
+<script>
+const dadosDia = {"2026-06-10": 8, "2026-06-11": 4, "2026-06-12": 3, "2026-06-14": 3, "2026-06-15": 9, "2026-06-16": 6, "2026-06-17": 6, "2026-06-18": 9, "2026-06-19": 4, "2026-06-21": 3, "2026-06-22": 5, "2026-06-23": 5, "2026-06-24": 9, "2026-06-25": 10, "2026-06-26": 7, "2026-06-27": 1, "2026-06-29": 7, "2026-06-30": 7, "2026-07-01": 8, "2026-07-02": 6, "2026-07-03": 5, "2026-07-06": 11, "2026-07-07": 9, "2026-07-08": 4, "2026-07-10": 5, "2026-07-19": 1, "2026-07-23": 5};
+const duracaoDia = {"2026-06-10": 13, "2026-06-11": 360, "2026-06-12": 143, "2026-06-14": 231, "2026-06-15": 840, "2026-06-16": 534, "2026-06-17": 628, "2026-06-18": 953, "2026-06-19": 991, "2026-06-21": 513, "2026-06-22": 403, "2026-06-23": 554, "2026-06-24": 559, "2026-06-25": 967, "2026-06-26": 807, "2026-06-27": 20, "2026-06-29": 850, "2026-06-30": 875, "2026-07-01": 1045, "2026-07-02": 815, "2026-07-03": 669, "2026-07-06": 1421, "2026-07-07": 1804, "2026-07-08": 321, "2026-07-10": 637, "2026-07-19": 96, "2026-07-23": 27};
+const dadosSemana = {"2026-W23": 18, "2026-W24": 37, "2026-W25": 37, "2026-W26": 33, "2026-W27": 29, "2026-W28": 1, "2026-W29": 5};
+const dadosMes = {"2026-06": 106, "2026-07": 54};
+const dadosHora = {"9": 9, "10": 11, "11": 19, "12": 10, "14": 10, "15": 9, "16": 16, "17": 16, "18": 14, "19": 22, "20": 6, "21": 8, "22": 10};
+const detalhes = {"2026-06-10": [{"data": "2026-06-10", "hora_inicio": "10:58:03", "hora_fim": "10:58:04", "duracao": 0}, {"data": "2026-06-10", "hora_inicio": "11:00:46", "hora_fim": "11:00:46", "duracao": 0}, {"data": "2026-06-10", "hora_inicio": "11:00:47", "hora_fim": "11:00:48", "duracao": 0}, {"data": "2026-06-10", "hora_inicio": "11:05:49", "hora_fim": "11:05:50", "duracao": 1}, {"data": "2026-06-10", "hora_inicio": "11:05:50", "hora_fim": "11:05:59", "duracao": 9}, {"data": "2026-06-10", "hora_inicio": "11:06:07", "hora_fim": "11:06:09", "duracao": 2}, {"data": "2026-06-10", "hora_inicio": "11:38:35", "hora_fim": "11:38:36", "duracao": 1}, {"data": "2026-06-10", "hora_inicio": "11:38:37", "hora_fim": "11:38:37", "duracao": 0}], "2026-06-11": [{"data": "2026-06-11", "hora_inicio": "10:32:38", "hora_fim": "10:32:49", "duracao": 11}, {"data": "2026-06-11", "hora_inicio": "17:14:08", "hora_fim": "17:19:01", "duracao": 293}, {"data": "2026-06-11", "hora_inicio": "19:05:37", "hora_fim": "19:06:10", "duracao": 33}, {"data": "2026-06-11", "hora_inicio": "19:34:26", "hora_fim": "19:34:49", "duracao": 23}], "2026-06-12": [{"data": "2026-06-12", "hora_inicio": "11:06:05", "hora_fim": "11:07:20", "duracao": 75}, {"data": "2026-06-12", "hora_inicio": "17:44:27", "hora_fim": "17:45:16", "duracao": 49}, {"data": "2026-06-12", "hora_inicio": "19:16:51", "hora_fim": "19:17:10", "duracao": 19}], "2026-06-14": [{"data": "2026-06-14", "hora_inicio": "11:53:40", "hora_fim": "11:54:56", "duracao": 76}, {"data": "2026-06-14", "hora_inicio": "19:04:02", "hora_fim": "19:05:09", "duracao": 67}, {"data": "2026-06-14", "hora_inicio": "20:55:06", "hora_fim": "20:56:34", "duracao": 88}], "2026-06-15": [{"data": "2026-06-15", "hora_inicio": "10:32:31", "hora_fim": "10:32:37", "duracao": 6}, {"data": "2026-06-15", "hora_inicio": "11:13:42", "hora_fim": "11:14:08", "duracao": 26}, {"data": "2026-06-15", "hora_inicio": "11:53:49", "hora_fim": "11:56:47", "duracao": 178}, {"data": "2026-06-15", "hora_inicio": "12:17:59", "hora_fim": "12:19:40", "duracao": 101}, {"data": "2026-06-15", "hora_inicio": "15:08:15", "hora_fim": "15:12:32", "duracao": 257}, {"data": "2026-06-15", "hora_inicio": "16:27:57", "hora_fim": "16:29:13", "duracao": 76}, {"data": "2026-06-15", "hora_inicio": "18:25:17", "hora_fim": "18:25:40", "duracao": 23}, {"data": "2026-06-15", "hora_inicio": "19:40:10", "hora_fim": "19:41:11", "duracao": 61}, {"data": "2026-06-15", "hora_inicio": "21:13:41", "hora_fim": "21:15:33", "duracao": 112}], "2026-06-16": [{"data": "2026-06-16", "hora_inicio": "11:32:48", "hora_fim": "11:32:56", "duracao": 8}, {"data": "2026-06-16", "hora_inicio": "17:43:56", "hora_fim": "17:45:00", "duracao": 64}, {"data": "2026-06-16", "hora_inicio": "18:07:18", "hora_fim": "18:08:46", "duracao": 88}, {"data": "2026-06-16", "hora_inicio": "18:33:16", "hora_fim": "18:38:18", "duracao": 302}, {"data": "2026-06-16", "hora_inicio": "19:27:38", "hora_fim": "19:27:55", "duracao": 17}, {"data": "2026-06-16", "hora_inicio": "21:53:40", "hora_fim": "21:54:35", "duracao": 55}], "2026-06-17": [{"data": "2026-06-17", "hora_inicio": "09:05:46", "hora_fim": "09:06:24", "duracao": 38}, {"data": "2026-06-17", "hora_inicio": "11:56:53", "hora_fim": "11:59:54", "duracao": 181}, {"data": "2026-06-17", "hora_inicio": "16:58:00", "hora_fim": "16:59:32", "duracao": 92}, {"data": "2026-06-17", "hora_inicio": "20:16:33", "hora_fim": "20:20:21", "duracao": 228}, {"data": "2026-06-17", "hora_inicio": "22:48:46", "hora_fim": "22:49:55", "duracao": 69}, {"data": "2026-06-17", "hora_inicio": "22:49:08", "hora_fim": "22:49:28", "duracao": 20}], "2026-06-18": [{"data": "2026-06-18", "hora_inicio": "09:14:04", "hora_fim": "09:20:28", "duracao": 384}, {"data": "2026-06-18", "hora_inicio": "09:42:27", "hora_fim": "09:43:49", "duracao": 82}, {"data": "2026-06-18", "hora_inicio": "10:17:42", "hora_fim": "10:19:21", "duracao": 99}, {"data": "2026-06-18", "hora_inicio": "10:34:28", "hora_fim": "10:34:38", "duracao": 10}, {"data": "2026-06-18", "hora_inicio": "12:15:50", "hora_fim": "12:17:12", "duracao": 82}, {"data": "2026-06-18", "hora_inicio": "12:46:21", "hora_fim": "12:48:48", "duracao": 147}, {"data": "2026-06-18", "hora_inicio": "16:03:43", "hora_fim": "16:05:35", "duracao": 112}, {"data": "2026-06-18", "hora_inicio": "16:28:07", "hora_fim": "16:28:14", "duracao": 7}, {"data": "2026-06-18", "hora_inicio": "16:35:14", "hora_fim": "16:35:44", "duracao": 30}], "2026-06-19": [{"data": "2026-06-19", "hora_inicio": "09:05:59", "hora_fim": "09:08:59", "duracao": 180}, {"data": "2026-06-19", "hora_inicio": "09:24:16", "hora_fim": "09:31:12", "duracao": 416}, {"data": "2026-06-19", "hora_inicio": "12:30:13", "hora_fim": "12:32:28", "duracao": 135}, {"data": "2026-06-19", "hora_inicio": "20:28:51", "hora_fim": "20:33:11", "duracao": 260}], "2026-06-21": [{"data": "2026-06-21", "hora_inicio": "11:03:03", "hora_fim": "11:04:37", "duracao": 94}, {"data": "2026-06-21", "hora_inicio": "11:13:03", "hora_fim": "11:14:42", "duracao": 99}, {"data": "2026-06-21", "hora_inicio": "22:10:03", "hora_fim": "22:15:23", "duracao": 320}], "2026-06-22": [{"data": "2026-06-22", "hora_inicio": "09:39:05", "hora_fim": "09:40:49", "duracao": 104}, {"data": "2026-06-22", "hora_inicio": "14:00:29", "hora_fim": "14:02:11", "duracao": 102}, {"data": "2026-06-22", "hora_inicio": "15:25:08", "hora_fim": "15:26:16", "duracao": 68}, {"data": "2026-06-22", "hora_inicio": "18:59:16", "hora_fim": "18:59:43", "duracao": 27}, {"data": "2026-06-22", "hora_inicio": "19:55:15", "hora_fim": "19:56:57", "duracao": 102}], "2026-06-23": [{"data": "2026-06-23", "hora_inicio": "14:47:35", "hora_fim": "14:47:49", "duracao": 14}, {"data": "2026-06-23", "hora_inicio": "16:16:08", "hora_fim": "16:21:25", "duracao": 317}, {"data": "2026-06-23", "hora_inicio": "18:59:42", "hora_fim": "18:59:51", "duracao": 9}, {"data": "2026-06-23", "hora_inicio": "19:51:41", "hora_fim": "19:53:36", "duracao": 115}, {"data": "2026-06-23", "hora_inicio": "21:18:10", "hora_fim": "21:19:49", "duracao": 99}], "2026-06-24": [{"data": "2026-06-24", "hora_inicio": "10:02:19", "hora_fim": "10:02:54", "duracao": 35}, {"data": "2026-06-24", "hora_inicio": "11:32:31", "hora_fim": "11:32:37", "duracao": 6}, {"data": "2026-06-24", "hora_inicio": "12:53:17", "hora_fim": "12:53:32", "duracao": 15}, {"data": "2026-06-24", "hora_inicio": "18:39:47", "hora_fim": "18:39:59", "duracao": 12}, {"data": "2026-06-24", "hora_inicio": "19:00:07", "hora_fim": "19:00:34", "duracao": 27}, {"data": "2026-06-24", "hora_inicio": "19:16:10", "hora_fim": "19:20:31", "duracao": 261}, {"data": "2026-06-24", "hora_inicio": "20:43:15", "hora_fim": "20:44:30", "duracao": 75}, {"data": "2026-06-24", "hora_inicio": "20:56:26", "hora_fim": "20:56:54", "duracao": 28}, {"data": "2026-06-24", "hora_inicio": "22:02:53", "hora_fim": "22:04:33", "duracao": 100}], "2026-06-25": [{"data": "2026-06-25", "hora_inicio": "10:23:27", "hora_fim": "10:23:53", "duracao": 26}, {"data": "2026-06-25", "hora_inicio": "10:25:21", "hora_fim": "10:25:28", "duracao": 7}, {"data": "2026-06-25", "hora_inicio": "11:02:06", "hora_fim": "11:03:20", "duracao": 74}, {"data": "2026-06-25", "hora_inicio": "12:22:19", "hora_fim": "12:25:17", "duracao": 178}, {"data": "2026-06-25", "hora_inicio": "16:12:16", "hora_fim": "16:12:34", "duracao": 18}, {"data": "2026-06-25", "hora_inicio": "18:27:38", "hora_fim": "18:33:07", "duracao": 329}, {"data": "2026-06-25", "hora_inicio": "18:55:02", "hora_fim": "18:57:58", "duracao": 176}, {"data": "2026-06-25", "hora_inicio": "19:51:15", "hora_fim": "19:51:45", "duracao": 30}, {"data": "2026-06-25", "hora_inicio": "21:22:41", "hora_fim": "21:24:37", "duracao": 116}, {"data": "2026-06-25", "hora_inicio": "22:21:01", "hora_fim": "22:21:14", "duracao": 13}], "2026-06-26": [{"data": "2026-06-26", "hora_inicio": "11:29:28", "hora_fim": "11:30:25", "duracao": 57}, {"data": "2026-06-26", "hora_inicio": "12:43:47", "hora_fim": "12:51:24", "duracao": 457}, {"data": "2026-06-26", "hora_inicio": "14:46:57", "hora_fim": "14:48:06", "duracao": 69}, {"data": "2026-06-26", "hora_inicio": "16:10:42", "hora_fim": "16:11:03", "duracao": 21}, {"data": "2026-06-26", "hora_inicio": "18:25:44", "hora_fim": "18:25:53", "duracao": 9}, {"data": "2026-06-26", "hora_inicio": "18:35:53", "hora_fim": "18:36:07", "duracao": 14}, {"data": "2026-06-26", "hora_inicio": "19:21:05", "hora_fim": "19:24:05", "duracao": 180}], "2026-06-27": [{"data": "2026-06-27", "hora_inicio": "17:01:02", "hora_fim": "17:01:22", "duracao": 20}], "2026-06-29": [{"data": "2026-06-29", "hora_inicio": "14:53:40", "hora_fim": "14:54:09", "duracao": 29}, {"data": "2026-06-29", "hora_inicio": "15:39:52", "hora_fim": "15:44:01", "duracao": 249}, {"data": "2026-06-29", "hora_inicio": "15:42:33", "hora_fim": "15:50:05", "duracao": 452}, {"data": "2026-06-29", "hora_inicio": "16:28:57", "hora_fim": "16:29:17", "duracao": 20}, {"data": "2026-06-29", "hora_inicio": "17:49:27", "hora_fim": "17:49:57", "duracao": 30}, {"data": "2026-06-29", "hora_inicio": "18:31:25", "hora_fim": "18:31:50", "duracao": 25}, {"data": "2026-06-29", "hora_inicio": "22:29:03", "hora_fim": "22:29:48", "duracao": 45}], "2026-06-30": [{"data": "2026-06-30", "hora_inicio": "14:22:19", "hora_fim": "14:26:06", "duracao": 227}, {"data": "2026-06-30", "hora_inicio": "14:45:18", "hora_fim": "14:45:33", "duracao": 15}, {"data": "2026-06-30", "hora_inicio": "15:03:13", "hora_fim": "15:06:52", "duracao": 219}, {"data": "2026-06-30", "hora_inicio": "16:05:08", "hora_fim": "16:05:25", "duracao": 17}, {"data": "2026-06-30", "hora_inicio": "16:34:51", "hora_fim": "16:35:49", "duracao": 58}, {"data": "2026-06-30", "hora_inicio": "19:13:04", "hora_fim": "19:14:16", "duracao": 72}, {"data": "2026-06-30", "hora_inicio": "22:44:01", "hora_fim": "22:48:28", "duracao": 267}], "2026-07-01": [{"data": "2026-07-01", "hora_inicio": "09:15:12", "hora_fim": "09:19:51", "duracao": 279}, {"data": "2026-07-01", "hora_inicio": "12:37:36", "hora_fim": "12:38:16", "duracao": 40}, {"data": "2026-07-01", "hora_inicio": "14:24:21", "hora_fim": "14:25:42", "duracao": 81}, {"data": "2026-07-01", "hora_inicio": "14:29:20", "hora_fim": "14:30:38", "duracao": 78}, {"data": "2026-07-01", "hora_inicio": "15:16:53", "hora_fim": "15:16:58", "duracao": 5}, {"data": "2026-07-01", "hora_inicio": "17:22:14", "hora_fim": "17:24:07", "duracao": 113}, {"data": "2026-07-01", "hora_inicio": "17:55:29", "hora_fim": "17:55:42", "duracao": 13}, {"data": "2026-07-01", "hora_inicio": "18:58:08", "hora_fim": "19:05:24", "duracao": 436}], "2026-07-02": [{"data": "2026-07-02", "hora_inicio": "14:36:13", "hora_fim": "14:37:15", "duracao": 62}, {"data": "2026-07-02", "hora_inicio": "17:19:06", "hora_fim": "17:20:15", "duracao": 69}, {"data": "2026-07-02", "hora_inicio": "17:38:38", "hora_fim": "17:44:07", "duracao": 329}, {"data": "2026-07-02", "hora_inicio": "18:25:45", "hora_fim": "18:26:08", "duracao": 23}, {"data": "2026-07-02", "hora_inicio": "19:15:06", "hora_fim": "19:16:14", "duracao": 68}, {"data": "2026-07-02", "hora_inicio": "22:51:07", "hora_fim": "22:55:31", "duracao": 264}], "2026-07-03": [{"data": "2026-07-03", "hora_inicio": "12:52:31", "hora_fim": "12:52:47", "duracao": 16}, {"data": "2026-07-03", "hora_inicio": "16:23:04", "hora_fim": "16:24:17", "duracao": 73}, {"data": "2026-07-03", "hora_inicio": "16:37:17", "hora_fim": "16:38:18", "duracao": 61}, {"data": "2026-07-03", "hora_inicio": "18:45:09", "hora_fim": "18:46:45", "duracao": 96}, {"data": "2026-07-03", "hora_inicio": "21:39:51", "hora_fim": "21:46:54", "duracao": 423}], "2026-07-06": [{"data": "2026-07-06", "hora_inicio": "10:12:13", "hora_fim": "10:15:23", "duracao": 190}, {"data": "2026-07-06", "hora_inicio": "10:22:51", "hora_fim": "10:23:04", "duracao": 13}, {"data": "2026-07-06", "hora_inicio": "15:14:07", "hora_fim": "15:17:27", "duracao": 200}, {"data": "2026-07-06", "hora_inicio": "16:23:30", "hora_fim": "16:24:44", "duracao": 74}, {"data": "2026-07-06", "hora_inicio": "16:35:21", "hora_fim": "16:36:49", "duracao": 88}, {"data": "2026-07-06", "hora_inicio": "17:18:14", "hora_fim": "17:19:15", "duracao": 61}, {"data": "2026-07-06", "hora_inicio": "19:24:21", "hora_fim": "19:24:36", "duracao": 15}, {"data": "2026-07-06", "hora_inicio": "19:30:41", "hora_fim": "19:34:35", "duracao": 234}, {"data": "2026-07-06", "hora_inicio": "19:38:18", "hora_fim": "19:44:07", "duracao": 349}, {"data": "2026-07-06", "hora_inicio": "20:15:46", "hora_fim": "20:17:27", "duracao": 101}, {"data": "2026-07-06", "hora_inicio": "22:56:17", "hora_fim": "22:57:53", "duracao": 96}], "2026-07-07": [{"data": "2026-07-07", "hora_inicio": "09:09:09", "hora_fim": "09:12:26", "duracao": 197}, {"data": "2026-07-07", "hora_inicio": "09:45:34", "hora_fim": "09:45:40", "duracao": 6}, {"data": "2026-07-07", "hora_inicio": "10:07:35", "hora_fim": "10:12:10", "duracao": 275}, {"data": "2026-07-07", "hora_inicio": "15:21:11", "hora_fim": "15:27:15", "duracao": 364}, {"data": "2026-07-07", "hora_inicio": "19:14:49", "hora_fim": "19:16:16", "duracao": 87}, {"data": "2026-07-07", "hora_inicio": "21:06:55", "hora_fim": "21:07:09", "duracao": 14}, {"data": "2026-07-07", "hora_inicio": "21:07:52", "hora_fim": "21:08:12", "duracao": 20}, {"data": "2026-07-07", "hora_inicio": "21:55:37", "hora_fim": "22:01:55", "duracao": 378}, {"data": "2026-07-07", "hora_inicio": "22:18:44", "hora_fim": "22:26:27", "duracao": 463}], "2026-07-08": [{"data": "2026-07-08", "hora_inicio": "11:45:18", "hora_fim": "11:49:14", "duracao": 236}, {"data": "2026-07-08", "hora_inicio": "12:28:44", "hora_fim": "12:29:51", "duracao": 67}, {"data": "2026-07-08", "hora_inicio": "14:10:15", "hora_fim": "14:10:22", "duracao": 7}, {"data": "2026-07-08", "hora_inicio": "19:06:48", "hora_fim": "19:06:59", "duracao": 11}], "2026-07-10": [{"data": "2026-07-10", "hora_inicio": "16:14:41", "hora_fim": "16:14:54", "duracao": 13}, {"data": "2026-07-10", "hora_inicio": "17:03:10", "hora_fim": "17:07:42", "duracao": 272}, {"data": "2026-07-10", "hora_inicio": "19:25:17", "hora_fim": "19:26:50", "duracao": 93}, {"data": "2026-07-10", "hora_inicio": "19:37:42", "hora_fim": "19:40:32", "duracao": 170}, {"data": "2026-07-10", "hora_inicio": "19:58:18", "hora_fim": "19:59:47", "duracao": 89}], "2026-07-19": [{"data": "2026-07-19", "hora_inicio": "15:42:05", "hora_fim": "15:43:42", "duracao": 96}], "2026-07-23": [{"data": "2026-07-23", "hora_inicio": "17:15:00", "hora_fim": "17:15:03", "duracao": 2}, {"data": "2026-07-23", "hora_inicio": "17:15:03", "hora_fim": "17:15:03", "duracao": 0}, {"data": "2026-07-23", "hora_inicio": "17:15:05", "hora_fim": "17:15:05", "duracao": 0}, {"data": "2026-07-23", "hora_inicio": "17:15:06", "hora_fim": "17:15:11", "duracao": 5}, {"data": "2026-07-23", "hora_inicio": "17:56:50", "hora_fim": "17:57:10", "duracao": 20}]};
+
+const CHART_OPTS = {
+  responsive: true,
+  plugins: { legend: { display: false } },
+  scales: {
+    x: { ticks: { color: '#94a3b8', font: { size: 11 } }, grid: { display: false } },
+    y: { ticks: { color: '#94a3b8', font: { size: 11 } }, grid: { color: '#334155' } }
+  }
+};
+
+const ctxP = document.getElementById('grafico-principal').getContext('2d');
+let graficoPrincipal = new Chart(ctxP, {
+  type: 'bar',
+  data: { labels: Object.keys(dadosDia).map(d => formatarData(d)), datasets: [{ data: Object.values(dadosDia), backgroundColor: '#3b82f6', borderRadius: 6 }] },
+  options: CHART_OPTS
+});
+
+const ctxH = document.getElementById('grafico-horas').getContext('2d');
+new Chart(ctxH, {
+  type: 'bar',
+  data: { labels: Object.keys(dadosHora).map(h => h + 'h'), datasets: [{ data: Object.values(dadosHora), backgroundColor: '#a78bfa', borderRadius: 6 }] },
+  options: { ...CHART_OPTS, maintainAspectRatio: false }
+});
+
+const ctxD = document.getElementById('grafico-duracao').getContext('2d');
+new Chart(ctxD, {
+  type: 'line',
+  data: { labels: Object.keys(duracaoDia).map(d => formatarData(d)), datasets: [{ data: Object.values(duracaoDia).map(s => Math.round(s/60*10)/10), borderColor: '#f59e0b', backgroundColor: '#f59e0b22', fill: true, tension: 0.4, pointRadius: 4 }] },
+  options: CHART_OPTS
+});
+
+const ctxS = document.getElementById('grafico-semana').getContext('2d');
+const semanaVals = Object.values(dadosSemana);
+const semanaKeys = Object.keys(dadosSemana);
+const semanaColors = semanaVals.map((val, i) => i === 0 ? '#10b981' : val > semanaVals[i-1] ? '#f87171' : '#10b981');
+const pluginDelta = {
+  id: 'deltaPlugin',
+  afterDatasetsDraw(chart) {
+    const ctx = chart.ctx;
+    ctx.save();
+    ctx.font = 'bold 11px Segoe UI';
+    ctx.textAlign = 'center';
+    semanaVals.forEach((val, i) => {
+      if (i === 0) return;
+      const anterior = semanaVals[i-1];
+      if (anterior === 0) return;
+      const pct = Math.round((val - anterior) / anterior * 100);
+      const texto = pct > 0 ? '+' + pct + '%' : pct + '%';
+      ctx.fillStyle = pct > 0 ? '#f87171' : '#6ee7b7';
+      const meta = chart.getDatasetMeta(0).data[i];
+      ctx.fillText(texto, meta.x, meta.y - 8);
+    });
+    ctx.restore();
+  }
+};
+new Chart(ctxS, {
+  type: 'bar',
+  data: { labels: semanaKeys.map(s => 'Sem ' + s.split('W')[1]), datasets: [{ data: semanaVals, backgroundColor: semanaColors, borderRadius: 6 }] },
+  options: CHART_OPTS,
+  plugins: [pluginDelta]
+});
+
+function setVista(vista, btn) {
+  document.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  let labels, valores, titulo;
+  if (vista === 'dia') { labels = Object.keys(dadosDia).map(d => formatarData(d)); valores = Object.values(dadosDia); titulo = 'Distrações por Dia'; }
+  else if (vista === 'semana') { labels = Object.keys(dadosSemana).map(s => 'Sem ' + s.split('W')[1]); valores = Object.values(dadosSemana); titulo = 'Distrações por Semana'; }
+  else { labels = Object.keys(dadosMes); valores = Object.values(dadosMes); titulo = 'Distrações por Mês'; }
+  document.getElementById('titulo-principal').textContent = titulo;
+  graficoPrincipal.data.labels = labels;
+  graficoPrincipal.data.datasets[0].data = valores;
+  graficoPrincipal.update();
+}
+
+const select = document.getElementById('select-dia');
+Object.keys(detalhes).sort().forEach(dia => {
+  const opt = document.createElement('option');
+  opt.value = dia; opt.textContent = formatarData(dia);
+  select.appendChild(opt);
+});
+
+function atualizarTabela() {
+  const diaFiltro = document.getElementById('select-dia').value;
+  const tipoFiltro = document.getElementById('select-tipo').value;
+  const tbody = document.getElementById('tabela-body');
+  tbody.innerHTML = '';
+  let registos = [];
+  if (diaFiltro) { registos = detalhes[diaFiltro] || []; }
+  else { Object.values(detalhes).forEach(arr => registos.push(...arr)); registos.sort((a, b) => a.data.localeCompare(b.data) || a.hora_inicio.localeCompare(b.hora_inicio)); }
+  if (tipoFiltro) { registos = registos.filter(r => { const dur = r.duracao; if (tipoFiltro === 'curta') return dur < 30; if (tipoFiltro === 'media') return dur >= 30 && dur < 120; if (tipoFiltro === 'longa') return dur >= 120; }); }
+  registos.slice(0, 100).forEach(r => {
+    const dur = r.duracao;
+    let badge, tipo;
+    if (dur < 30) { badge = 'curta'; tipo = 'Rápida'; }
+    else if (dur < 120) { badge = 'media'; tipo = 'Média'; }
+    else { badge = 'longa'; tipo = 'Longa'; }
+    const mins = Math.floor(dur / 60);
+    const segs = dur % 60;
+    const durStr = mins > 0 ? `${mins}m ${segs}s` : `${segs}s`;
+    tbody.innerHTML += `<tr><td>${formatarData(r.data)}</td><td>${r.hora_inicio}</td><td>${r.hora_fim}</td><td>${durStr}</td><td><span class="badge ${badge}">${tipo}</span></td></tr>`;
+  });
+}
+
+function formatarData(d) {
+  const [ano, mes, dia] = d.split('-');
+  return `${dia}/${mes}/${ano}`;
+}
+
+function toggleTheme() {
+  const isLight = document.body.classList.toggle('light');
+  document.querySelector('.toggle-theme').textContent = isLight ? '🌙 Dark Mode' : '☀️ Light Mode';
+}
+
+atualizarTabela();
+</script>
+</body>
+</html>
