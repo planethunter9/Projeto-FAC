@@ -131,6 +131,63 @@ def gerar_dashboard():
     media = total_seg / total if total > 0 else 0
     hora_pior = max(por_hora, key=por_hora.get) if por_hora else 0
 
+    # ── INSIGHTS AUTOMÁTICOS ──────────────────────────────
+    insights = []
+
+    # Insight 1: hora mais problemática
+    if por_hora:
+        insights.append(f"A tua hora mais crítica é às <b>{hora_pior}h</b> - é quando te distrais mais.")
+
+    # Insight 2: período do dia dominante
+    periodo_top = max(periodos, key=periodos.get)
+    periodo_nome = periodo_top.split('\n')[0]
+    total_periodo = sum(periodos.values())
+    if total_periodo > 0:
+        pct_periodo = round(periodos[periodo_top] / total_periodo * 100)
+        insights.append(f"Concentras <b>{pct_periodo}%</b> das distrações no período da <b>{periodo_nome.lower()}</b>.")
+
+    # Insight 3: melhor vs pior dia da semana
+    dow_pt = ['segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sábado', 'domingo']
+    por_dow = defaultdict(list)
+    for dia in dias:
+        dt = datetime.strptime(dia, '%Y-%m-%d')
+        por_dow[dt.weekday()].append(len(por_dia[dia]))
+    media_dow = {d: sum(v)/len(v) for d, v in por_dow.items() if v}
+    if media_dow:
+        melhor_dow = min(media_dow, key=media_dow.get)
+        pior_dow = max(media_dow, key=media_dow.get)
+        insights.append(f"<b>{dow_pt[melhor_dow].capitalize()}</b> é o teu dia mais focado; <b>{dow_pt[pior_dow]}</b> o mais distraído.")
+
+    # Insight 4: duração típica
+    curtas = sum(1 for d in dados if d['duracao'] < 30)
+    pct_curtas = round(curtas / total * 100) if total > 0 else 0
+    insights.append(f"<b>{pct_curtas}%</b> das tuas distrações são rápidas (menos de 30 segundos) - verificações reflexas do telemóvel.")
+
+    # ── COMPARAÇÃO SEMANA ATUAL vs ANTERIOR ───────────────
+    comparacao = None
+    if len(semanas) >= 2:
+        sem_atual = semanas[-1]
+        sem_anterior = semanas[-2]
+        n_atual = len(por_semana[sem_atual])
+        n_anterior = len(por_semana[sem_anterior])
+        seg_atual = sum(d['duracao'] for d in por_semana[sem_atual])
+        seg_anterior = sum(d['duracao'] for d in por_semana[sem_anterior])
+        if n_anterior > 0:
+            delta_n = round((n_atual - n_anterior) / n_anterior * 100)
+        else:
+            delta_n = 0
+        if seg_anterior > 0:
+            delta_seg = round((seg_atual - seg_anterior) / seg_anterior * 100)
+        else:
+            delta_seg = 0
+        comparacao = {
+            'n_atual': n_atual, 'n_anterior': n_anterior, 'delta_n': delta_n,
+            'min_atual': round(seg_atual/60), 'min_anterior': round(seg_anterior/60), 'delta_seg': delta_seg
+        }
+
+    insights_json = json.dumps(insights)
+    comparacao_json = json.dumps(comparacao)
+
     detalhes_json = json.dumps(por_dia)
     dados_por_dia_json = json.dumps(dados_por_dia)
     duracao_por_dia_json = json.dumps(duracao_por_dia)
@@ -172,7 +229,7 @@ def gerar_dashboard():
   .grafico-box {{ background: #1e293b; border-radius: 12px; padding: 20px; border: 1px solid #334155; }}
   .grafico-box h3 {{ font-size: 14px; color: #94a3b8; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.05em; }}
   .grafico-hint {{ font-size: 11px; color: #475569; margin-bottom: 12px; }}
-  .graficos-grid2 {{ display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; align-items: stretch; }}
+  .graficos-grid2 {{ display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }}
   .tabela-box {{ background: #1e293b; border-radius: 12px; padding: 20px; border: 1px solid #334155; margin-bottom: 16px; }}
   .tabela-box h3 {{ font-size: 14px; color: #94a3b8; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.05em; }}
   .filtro-dia {{ display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }}
@@ -188,7 +245,10 @@ def gerar_dashboard():
   .badge.longa {{ background: #7f1d1d; color: #fca5a5; }}
   .toggle-theme {{ position: fixed; top: 20px; right: 20px; z-index: 999;
     padding: 8px 16px; border-radius: 8px; border: 1px solid #334155;
-    background: #1e293b; color: #e2e8f0; cursor: pointer; font-size: 13px; }}
+    background: #1e293b; color: #e2e8f0; cursor: pointer; font-size: 13px;
+    display: inline-flex; align-items: center; gap: 6px; }}
+  .toggle-theme #theme-icon {{ display: inline-flex; align-items: center; }}
+  .btn-pdf {{ display: inline-flex; align-items: center; }}
   .breadcrumb {{ font-size: 12px; color: #475569; margin-bottom: 8px; }}
   .breadcrumb span {{ color: #60a5fa; cursor: pointer; }}
   .breadcrumb span:hover {{ text-decoration: underline; }}
@@ -209,10 +269,77 @@ def gerar_dashboard():
   body.light .toggle-theme {{ background: #ffffff; border-color: #e2e8f0; color: #0f172a; }}
   body.light .grafico-hint {{ color: #94a3b8; }}
   body.light .breadcrumb {{ color: #94a3b8; }}
+
+  /* Tabs */
+  .tabs {{ display: flex; gap: 4px; margin-bottom: 20px; border-bottom: 1px solid #334155; }}
+  .tab {{ padding: 10px 20px; border: none; background: none; color: #94a3b8;
+    cursor: pointer; font-size: 14px; font-weight: 500; border-bottom: 2px solid transparent;
+    margin-bottom: -1px; transition: all 0.2s; }}
+  .tab:hover {{ color: #60a5fa; }}
+  .tab.active {{ color: #60a5fa; border-bottom-color: #60a5fa; }}
+  .tab-panel {{ display: none; }}
+  .tab-panel.active {{ display: block; }}
+  body.light .tabs {{ border-color: #e2e8f0; }}
+  body.light .tab {{ color: #64748b; }}
+  body.light .tab.active {{ color: #2563eb; border-bottom-color: #2563eb; }}
+
+  /* Insights */
+  .insights-meta-grid {{ display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; align-items: stretch; }}
+  .insights {{ background: #1e293b; border-radius: 12px; padding: 20px; border: 1px solid #334155; }}
+  .insights h3 {{ font-size: 14px; color: #94a3b8; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.05em; }}
+  .insight-item {{ display: flex; align-items: flex-start; gap: 10px; padding: 10px 0; border-bottom: 1px solid #0f172a; font-size: 14px; color: #cbd5e1; }}
+  .insight-item:last-child {{ border-bottom: none; }}
+  .insight-item .ico {{ font-size: 18px; }}
+  .insight-item b {{ color: #60a5fa; }}
+  body.light .insights {{ background: #ffffff; border-color: #e2e8f0; }}
+  body.light .insights h3 {{ color: #64748b; }}
+  body.light .insight-item {{ color: #334155; border-color: #f1f5f9; }}
+
+  /* Comparação semanal */
+  .comparacao {{ display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }}
+  .comp-card {{ background: #1e293b; border-radius: 12px; padding: 20px; border: 1px solid #334155; }}
+  .comp-card .label {{ font-size: 12px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }}
+  .comp-card .valor {{ font-size: 24px; font-weight: 700; color: #f8fafc; }}
+  .comp-card .delta {{ font-size: 14px; font-weight: 600; margin-top: 4px; }}
+  .comp-card .delta.up {{ color: #f87171; }}
+  .comp-card .delta.down {{ color: #6ee7b7; }}
+  .comp-card .sub {{ font-size: 12px; color: #64748b; margin-top: 2px; }}
+  body.light .comp-card {{ background: #ffffff; border-color: #e2e8f0; }}
+  body.light .comp-card .valor {{ color: #0f172a; }}
+
+  /* Meta */
+  .meta-box {{ background: #1e293b; border-radius: 12px; padding: 20px; border: 1px solid #334155; }}
+  .meta-box h3 {{ font-size: 14px; color: #94a3b8; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.05em; }}
+  .meta-controls {{ display: flex; align-items: center; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }}
+  .meta-controls input {{ background: #0f172a; color: #e2e8f0; border: 1px solid #334155; padding: 6px 12px; border-radius: 8px; font-size: 13px; width: 70px; }}
+  .meta-controls label {{ font-size: 13px; color: #94a3b8; }}
+  .meta-barra {{ height: 24px; background: #0f172a; border-radius: 12px; overflow: hidden; position: relative; }}
+  .meta-fill {{ height: 100%; border-radius: 12px; transition: width 0.4s, background 0.4s; }}
+  .meta-texto {{ font-size: 13px; margin-top: 8px; color: #cbd5e1; }}
+  body.light .meta-box {{ background: #ffffff; border-color: #e2e8f0; }}
+  body.light .meta-box h3 {{ color: #64748b; }}
+  body.light .meta-controls input {{ background: #f8fafc; color: #0f172a; border-color: #e2e8f0; }}
+  body.light .meta-barra {{ background: #f1f5f9; }}
+  body.light .meta-texto {{ color: #334155; }}
+
+  /* Botão PDF */
+  .btn-pdf {{ position: fixed; top: 20px; right: 170px; z-index: 999;
+    padding: 8px 16px; border-radius: 8px; border: 1px solid #334155;
+    background: #2563eb; color: white; cursor: pointer; font-size: 13px; }}
+  .btn-pdf:hover {{ background: #1d4ed8; }}
+
+  @media print {{
+    .toggle-theme, .btn-pdf, .filtros, .meta-controls {{ display: none !important; }}
+    body {{ background: white !important; color: black !important; }}
+    .card, .grafico-box, .insights, .comp-card, .meta-box, .tabela-box {{ 
+      background: white !important; border: 1px solid #ccc !important; 
+      page-break-inside: avoid; }}
+  }}
 </style>
 </head>
 <body>
-<button class="toggle-theme" onclick="toggleTheme()">☀️ Light Mode</button>
+<button class="btn-pdf" onclick="window.print()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:6px"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>Exportar PDF</button>
+<button class="toggle-theme" onclick="toggleTheme()"><span id="theme-icon"></span><span id="theme-label">Light Mode</span></button>
 <header>
   <h1>Dashboard de Distrações no Estudo</h1>
   <p>Sistema de monitorização com Arduino Nano RP2040 Connect</p>
@@ -224,6 +351,35 @@ def gerar_dashboard():
     <div class="card blue"><div class="valor">{media:.0f}s</div><div class="label">Duração Média</div></div>
     <div class="card purple"><div class="valor">{hora_pior}h</div><div class="label">Hora com mais Distrações</div></div>
   </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="mostrarTab('visao', this)">Visão Geral</button>
+    <button class="tab" onclick="mostrarTab('analise', this)">Análise</button>
+    <button class="tab" onclick="mostrarTab('registo', this)">Registo</button>
+  </div>
+
+  <div class="tab-panel active" id="tab-visao">
+  <div class="insights-meta-grid">
+    <div class="insights">
+      <h3><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:6px"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5.76.76 1.23 1.52 1.41 2.5"/></svg>Insights</h3>
+      <div id="insights-lista"></div>
+    </div>
+
+    <div class="meta-box">
+      <h3><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:6px"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>Meta Diária</h3>
+      <div class="meta-controls">
+        <label>Objetivo máximo de distrações por dia:</label>
+        <input type="number" id="meta-input" value="5" min="1" max="50" onchange="atualizarMeta()">
+      </div>
+      <div class="meta-barra"><div class="meta-fill" id="meta-fill"></div></div>
+      <div class="meta-texto" id="meta-texto"></div>
+    </div>
+  </div>
+
+  <div class="comparacao" id="comparacao-box"></div>
+  </div>
+
+  <div class="tab-panel" id="tab-analise">
   <div class="filtros">
     <span>Ver por:</span>
     <button class="btn active" onclick="setVista('dia', this)">Dia</button>
@@ -233,7 +389,7 @@ def gerar_dashboard():
   <div class="graficos-grid">
     <div class="grafico-box">
       <h3 id="titulo-principal">Distrações por Dia</h3>
-      <div class="grafico-hint" id="hint-principal">💡 Clica numa barra para ver o detalhe</div>
+      <div class="grafico-hint" id="hint-principal"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:4px"><path d="m9 9 5 12 1.8-5.2L21 14Z"/><path d="M7.2 2.2 8 5.1"/><path d="m5.1 8-2.9-.8"/><path d="M14 4.1 12 6"/><path d="m6 12-1.9 2"/></svg>Clica numa barra para ver o detalhe</div>
       <div class="breadcrumb" id="breadcrumb" style="display:none"></div>
       <canvas id="grafico-principal" height="120"></canvas>
     </div>
@@ -244,9 +400,12 @@ def gerar_dashboard():
     </div>
   </div>
   <div class="graficos-grid2">
-    <div class="grafico-box"><h3>Tempo Total Distraído por Dia (minutos)</h3><canvas id="grafico-duracao" height="120"></canvas></div>
-    <div class="grafico-box" style="display:flex; flex-direction:column; justify-content:center;"><h3>Distribuição por Período do Dia</h3><div style="height: 250px;"><canvas id="grafico-periodos"></canvas></div></div>
-      </div>
+    <div class="grafico-box"><h3>Tempo Total Distraído por Dia (minutos)</h3><div style="height:260px;"><canvas id="grafico-duracao"></canvas></div></div>
+    <div class="grafico-box"><h3>Distribuição por Período do Dia</h3><div style="height:260px;"><canvas id="grafico-periodos"></canvas></div></div>
+  </div>
+  </div>
+
+  <div class="tab-panel" id="tab-registo">
   <div class="tabela-box">
     <h3>Registo Detalhado</h3>
     <div class="filtro-dia">
@@ -263,6 +422,7 @@ def gerar_dashboard():
       <tbody id="tabela-body"></tbody>
     </table>
   </div>
+  </div>
 </div>
 <script>
 const dadosDia = {dados_por_dia_json};
@@ -274,6 +434,9 @@ const horasPorDia = {horas_por_dia_json};
 const diasPorSemana = {dias_por_semana_json};
 const semanasPorMes = {semanas_por_mes_json};
 const periodos = {periodos_json};
+const insights = {insights_json};
+const comparacao = {comparacao_json};
+const dadosDiaMeta = {dados_por_dia_json};
 
 let vistaAtual = 'dia';
 let selecaoAtual = null;
@@ -282,7 +445,7 @@ const CHART_OPTS = {{
   responsive: true,
   plugins: {{ legend: {{ display: false }} }},
   scales: {{
-    x: {{ offset: true, ticks: {{ color: '#94a3b8', font: {{ size: 11 }} }}, grid: {{ display: false }} }},
+    x: {{ ticks: {{ color: '#94a3b8', font: {{ size: 11 }} }}, grid: {{ display: false }} }},
     y: {{ min: 0, ticks: {{ color: '#94a3b8', font: {{ size: 11 }} }}, grid: {{ color: '#334155' }} }}
   }}
 }};
@@ -384,19 +547,43 @@ function voltarGlobal() {{
 
 // ── Gráfico linha duração ──────────────────────────────────
 const ctxDur = document.getElementById('grafico-duracao').getContext('2d');
-new Chart(ctxDur, {{
+let graficoDuracao = new Chart(ctxDur, {{
   type: 'line',
   data: {{ labels: Object.keys(duracaoDia).map(d => formatarData(d)), datasets: [{{ data: Object.values(duracaoDia).map(s => Math.round(s/60*10)/10), borderColor: '#f59e0b', backgroundColor: '#f59e0b22', fill: true, tension: 0.4, pointRadius: 4 }}] }},
-  options: CHART_OPTS
+  options: {{ ...CHART_OPTS, maintainAspectRatio: false }}
 }});
 
 // ── Gráfico circular períodos ──────────────────────────────
 const ctxPer = document.getElementById('grafico-periodos').getContext('2d');
-new Chart(ctxPer, {{
+const periodoVals = Object.values(periodos);
+const periodoTotal = periodoVals.reduce((a, b) => a + b, 0);
+
+const pluginPctDonut = {{
+  id: 'pctDonut',
+  afterDatasetsDraw(chart) {{
+    const ctx = chart.ctx;
+    const meta = chart.getDatasetMeta(0);
+    ctx.save();
+    ctx.font = 'bold 13px Segoe UI';
+    ctx.fillStyle = '#fff';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    meta.data.forEach((arc, i) => {{
+      const val = periodoVals[i];
+      if (val === 0 || periodoTotal === 0) return;
+      const pct = Math.round(val / periodoTotal * 100);
+      const pos = arc.tooltipPosition();
+      ctx.fillText(pct + '%', pos.x, pos.y);
+    }});
+    ctx.restore();
+  }}
+}};
+
+let graficoPeriodos = new Chart(ctxPer, {{
   type: 'doughnut',
   data: {{
     labels: Object.keys(periodos),
-    datasets: [{{ data: Object.values(periodos), backgroundColor: ['#60a5fa','#f59e0b','#f87171','#a78bfa'], borderWidth: 0 }}]
+    datasets: [{{ data: periodoVals, backgroundColor: ['#60a5fa','#f59e0b','#f87171','#a78bfa'], borderWidth: 0 }}]
   }},
   options: {{
     responsive: true,
@@ -405,7 +592,8 @@ new Chart(ctxPer, {{
       legend: {{ display: true, position: 'bottom', labels: {{ color: '#94a3b8', font: {{ size: 11 }}, padding: 12 }} }},
       tooltip: {{ callbacks: {{ label: (ctx) => ` ${{ctx.label.replace('\\n',' ')}}: ${{ctx.raw}} distrações` }} }}
     }}
-  }}
+  }},
+  plugins: [pluginPctDonut]
 }});
 
 // ── Vista ──────────────────────────────────────────────────
@@ -515,12 +703,90 @@ function formatarData(d) {{
   return `${{dia}}/${{mes}}/${{ano}}`;
 }}
 
+const svgSun = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>';
+const svgMoon = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>';
+document.getElementById('theme-icon').innerHTML = svgSun;
+
 function toggleTheme() {{
   const isLight = document.body.classList.toggle('light');
-  document.querySelector('.toggle-theme').textContent = isLight ? '🌙 Dark Mode' : '☀️ Light Mode';
+  document.getElementById('theme-icon').innerHTML = isLight ? svgMoon : svgSun;
+  document.getElementById('theme-label').textContent = isLight ? 'Dark Mode' : 'Light Mode';
 }}
 
 atualizarTabela();
+
+// ── Insights ───────────────────────────────────────────────
+const listaInsights = document.getElementById('insights-lista');
+const svgClock = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>';
+const svgChart = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>';
+const svgCalendar = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>';
+const svgBolt = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>';
+const icones = [svgClock, svgChart, svgCalendar, svgBolt];
+insights.forEach((txt, i) => {{
+  const div = document.createElement('div');
+  div.className = 'insight-item';
+  div.innerHTML = `<span class="ico">${{icones[i % icones.length]}}</span><span>${{txt}}</span>`;
+  listaInsights.appendChild(div);
+}});
+
+// ── Comparação semanal ─────────────────────────────────────
+if (comparacao) {{
+  const box = document.getElementById('comparacao-box');
+  const setaN = comparacao.delta_n > 0 ? '↑' : comparacao.delta_n < 0 ? '↓' : '→';
+  const classeN = comparacao.delta_n > 0 ? 'up' : 'down';
+  const setaS = comparacao.delta_seg > 0 ? '↑' : comparacao.delta_seg < 0 ? '↓' : '→';
+  const classeS = comparacao.delta_seg > 0 ? 'up' : 'down';
+  box.innerHTML = `
+    <div class="comp-card">
+      <div class="label">Distrações esta semana</div>
+      <div class="valor">${{comparacao.n_atual}}</div>
+      <div class="delta ${{classeN}}">${{setaN}} ${{Math.abs(comparacao.delta_n)}}% vs semana anterior</div>
+      <div class="sub">Semana anterior: ${{comparacao.n_anterior}} distrações</div>
+    </div>
+    <div class="comp-card">
+      <div class="label">Tempo distraído esta semana</div>
+      <div class="valor">${{comparacao.min_atual}} min</div>
+      <div class="delta ${{classeS}}">${{setaS}} ${{Math.abs(comparacao.delta_seg)}}% vs semana anterior</div>
+      <div class="sub">Semana anterior: ${{comparacao.min_anterior}} min</div>
+    </div>`;
+}}
+
+// ── Meta diária ────────────────────────────────────────────
+function atualizarMeta() {{
+  const meta = parseInt(document.getElementById('meta-input').value) || 5;
+  const valores = Object.values(dadosDiaMeta);
+  const diasOk = valores.filter(v => v <= meta).length;
+  const totalDias = valores.length;
+  const pct = totalDias > 0 ? Math.round(diasOk / totalDias * 100) : 0;
+
+  const fill = document.getElementById('meta-fill');
+  fill.style.width = pct + '%';
+  if (pct >= 70) fill.style.background = '#10b981';
+  else if (pct >= 40) fill.style.background = '#f59e0b';
+  else fill.style.background = '#f87171';
+
+  document.getElementById('meta-texto').innerHTML =
+    `Cumpriste a meta em <b>${{diasOk}} de ${{totalDias}} dias</b> (${{pct}}%). ` +
+    (pct >= 70 ? 'Bom trabalho!' : pct >= 40 ? 'Vais no bom caminho.' : 'Há margem para melhorar.');
+}}
+atualizarMeta();
+
+// ── Tabs ───────────────────────────────────────────────────
+function mostrarTab(nome, btn) {{
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-' + nome).classList.add('active');
+  // Redimensionar gráficos (Chart.js não desenha bem se o painel estava escondido)
+  setTimeout(() => {{
+    if (nome === 'analise') {{
+      graficoPrincipal.resize();
+      if (graficoDetalhe) graficoDetalhe.resize();
+      graficoDuracao.resize();
+      graficoPeriodos.resize();
+    }}
+  }}, 50);
+}}
 </script>
 </body>
 </html>"""
@@ -532,6 +798,8 @@ atualizarTabela();
 def monitorizar(porta):
     distracao_inicio = None
     total = 0
+    inicio_sessao = datetime.now()
+    duracoes_sessao = []
     print(verde(f"\nArduino detetado em {porta}"))
     print(bold("\n┌─────────────────────────────────────────┐"))
     print(bold("│   Sistema de Monitorização Ativo        │"))
@@ -550,6 +818,7 @@ def monitorizar(porta):
                 elif linha == "DISTRACAO_FIM" and distracao_inicio:
                     fim = datetime.now()
                     duracao = (fim - distracao_inicio).seconds
+                    duracoes_sessao.append(duracao)
                     print(verde(f"  [{fim.strftime('%H:%M:%S')}] Voltou a estudar. Duração: {duracao}s"))
                     wb = load_workbook(FICHEIRO)
                     ws = wb.active
@@ -558,6 +827,34 @@ def monitorizar(porta):
                     distracao_inicio = None
     except KeyboardInterrupt:
         pass
+
+    # ── Resumo da sessão ──────────────────────────────────
+    fim_sessao = datetime.now()
+    dur_sessao = int((fim_sessao - inicio_sessao).total_seconds())
+    h_sessao = dur_sessao // 3600
+    m_sessao = (dur_sessao % 3600) // 60
+    total_distraido = sum(duracoes_sessao)
+    media_sessao = total_distraido / len(duracoes_sessao) if duracoes_sessao else 0
+
+    print(bold(azul("\n╔══════════════════════════════════════════════╗")))
+    print(bold(azul("║             RESUMO DA SESSÃO                 ║")))
+    print(bold(azul("╚══════════════════════════════════════════════╝")))
+    print(f"  Duração da sessão:      {h_sessao}h {m_sessao}min")
+    print(f"  Distrações detetadas:   {total}")
+    print(f"  Tempo distraído:        {total_distraido // 60}min {total_distraido % 60}s")
+    if duracoes_sessao:
+        print(f"  Duração média:          {media_sessao:.0f}s")
+        print(f"  Distração mais longa:   {max(duracoes_sessao)}s")
+    if dur_sessao > 0:
+        pct_focado = round((1 - total_distraido / dur_sessao) * 100)
+        print(f"  Tempo focada:           {pct_focado}%")
+        if pct_focado >= 90:
+            print(verde("  Excelente sessão de estudo!"))
+        elif pct_focado >= 75:
+            print(amarelo("  Boa sessão, mas há margem para melhorar."))
+        else:
+            print(vermelho("  Sessão com muitas distrações."))
+    print()
 
 def main():
     os.system('cls' if os.name == 'nt' else 'clear')
