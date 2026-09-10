@@ -136,7 +136,7 @@ def gerar_dashboard():
 
     # Insight 1: hora mais problemática
     if por_hora:
-        insights.append(f"A tua hora mais crítica é às <b>{hora_pior}h</b> - é quando te distrais mais.")
+        insights.append(f"A tua hora mais crítica é às <b>{hora_pior}h</b> — é quando te distrais mais.")
 
     # Insight 2: período do dia dominante
     periodo_top = max(periodos, key=periodos.get)
@@ -161,7 +161,7 @@ def gerar_dashboard():
     # Insight 4: duração típica
     curtas = sum(1 for d in dados if d['duracao'] < 30)
     pct_curtas = round(curtas / total * 100) if total > 0 else 0
-    insights.append(f"<b>{pct_curtas}%</b> das tuas distrações são rápidas (menos de 30 segundos) - verificações reflexas do telemóvel.")
+    insights.append(f"<b>{pct_curtas}%</b> das tuas distrações são rápidas (menos de 30 segundos) — verificações reflexas do telemóvel.")
 
     # ── COMPARAÇÃO SEMANA ATUAL vs ANTERIOR ───────────────
     comparacao = None
@@ -180,9 +180,24 @@ def gerar_dashboard():
             delta_seg = round((seg_atual - seg_anterior) / seg_anterior * 100)
         else:
             delta_seg = 0
+
+        # Intervalo de datas de cada semana
+        meses_pt = {1:'jan',2:'fev',3:'mar',4:'abr',5:'mai',6:'jun',
+                    7:'jul',8:'ago',9:'set',10:'out',11:'nov',12:'dez'}
+        def intervalo_semana(dados_sem):
+            datas = sorted(datetime.strptime(d['data'], '%Y-%m-%d') for d in dados_sem)
+            ini, fim = datas[0], datas[-1]
+            if ini.month == fim.month:
+                return f"{ini.day}–{fim.day} {meses_pt[ini.month]}"
+            return f"{ini.day} {meses_pt[ini.month]} – {fim.day} {meses_pt[fim.month]}"
+
+        label_atual = intervalo_semana(por_semana[sem_atual])
+        label_anterior = intervalo_semana(por_semana[sem_anterior])
+
         comparacao = {
             'n_atual': n_atual, 'n_anterior': n_anterior, 'delta_n': delta_n,
-            'min_atual': round(seg_atual/60), 'min_anterior': round(seg_anterior/60), 'delta_seg': delta_seg
+            'min_atual': round(seg_atual/60), 'min_anterior': round(seg_anterior/60), 'delta_seg': delta_seg,
+            'label_atual': label_atual, 'label_anterior': label_anterior
         }
 
     insights_json = json.dumps(insights)
@@ -738,16 +753,16 @@ if (comparacao) {{
   const classeS = comparacao.delta_seg > 0 ? 'up' : 'down';
   box.innerHTML = `
     <div class="comp-card">
-      <div class="label">Distrações esta semana</div>
+      <div class="label">Distrações na última semana registada</div>
       <div class="valor">${{comparacao.n_atual}}</div>
-      <div class="delta ${{classeN}}">${{setaN}} ${{Math.abs(comparacao.delta_n)}}% vs semana anterior</div>
-      <div class="sub">Semana anterior: ${{comparacao.n_anterior}} distrações</div>
+      <div class="delta ${{classeN}}">${{setaN}} ${{Math.abs(comparacao.delta_n)}}% face à semana anterior</div>
+      <div class="sub">${{comparacao.label_atual}} · anterior (${{comparacao.label_anterior}}): ${{comparacao.n_anterior}} distrações</div>
     </div>
     <div class="comp-card">
-      <div class="label">Tempo distraído esta semana</div>
+      <div class="label">Tempo distraído na última semana registada</div>
       <div class="valor">${{comparacao.min_atual}} min</div>
-      <div class="delta ${{classeS}}">${{setaS}} ${{Math.abs(comparacao.delta_seg)}}% vs semana anterior</div>
-      <div class="sub">Semana anterior: ${{comparacao.min_anterior}} min</div>
+      <div class="delta ${{classeS}}">${{setaS}} ${{Math.abs(comparacao.delta_seg)}}% face à semana anterior</div>
+      <div class="sub">${{comparacao.label_atual}} · anterior (${{comparacao.label_anterior}}): ${{comparacao.min_anterior}} min</div>
     </div>`;
 }}
 
