@@ -29,7 +29,7 @@
   .grafico-box { background: #1e293b; border-radius: 12px; padding: 20px; border: 1px solid #334155; }
   .grafico-box h3 { font-size: 14px; color: #94a3b8; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
   .grafico-hint { font-size: 11px; color: #475569; margin-bottom: 12px; }
-  .graficos-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; align-items: stretch; }
+  .graficos-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
   .tabela-box { background: #1e293b; border-radius: 12px; padding: 20px; border: 1px solid #334155; margin-bottom: 16px; }
   .tabela-box h3 { font-size: 14px; color: #94a3b8; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.05em; }
   .filtro-dia { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
@@ -45,7 +45,10 @@
   .badge.longa { background: #7f1d1d; color: #fca5a5; }
   .toggle-theme { position: fixed; top: 20px; right: 20px; z-index: 999;
     padding: 8px 16px; border-radius: 8px; border: 1px solid #334155;
-    background: #1e293b; color: #e2e8f0; cursor: pointer; font-size: 13px; }
+    background: #1e293b; color: #e2e8f0; cursor: pointer; font-size: 13px;
+    display: inline-flex; align-items: center; gap: 6px; }
+  .toggle-theme #theme-icon { display: inline-flex; align-items: center; }
+  .btn-pdf { display: inline-flex; align-items: center; }
   .breadcrumb { font-size: 12px; color: #475569; margin-bottom: 8px; }
   .breadcrumb span { color: #60a5fa; cursor: pointer; }
   .breadcrumb span:hover { text-decoration: underline; }
@@ -66,21 +69,117 @@
   body.light .toggle-theme { background: #ffffff; border-color: #e2e8f0; color: #0f172a; }
   body.light .grafico-hint { color: #94a3b8; }
   body.light .breadcrumb { color: #94a3b8; }
+
+  /* Tabs */
+  .tabs { display: flex; gap: 4px; margin-bottom: 20px; border-bottom: 1px solid #334155; }
+  .tab { padding: 10px 20px; border: none; background: none; color: #94a3b8;
+    cursor: pointer; font-size: 14px; font-weight: 500; border-bottom: 2px solid transparent;
+    margin-bottom: -1px; transition: all 0.2s; }
+  .tab:hover { color: #60a5fa; }
+  .tab.active { color: #60a5fa; border-bottom-color: #60a5fa; }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+  body.light .tabs { border-color: #e2e8f0; }
+  body.light .tab { color: #64748b; }
+  body.light .tab.active { color: #2563eb; border-bottom-color: #2563eb; }
+
+  /* Insights */
+  .insights-meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; align-items: stretch; }
+  .insights { background: #1e293b; border-radius: 12px; padding: 20px; border: 1px solid #334155; }
+  .insights h3 { font-size: 14px; color: #94a3b8; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .insight-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 0; border-bottom: 1px solid #0f172a; font-size: 14px; color: #cbd5e1; }
+  .insight-item:last-child { border-bottom: none; }
+  .insight-item .ico { font-size: 18px; }
+  .insight-item b { color: #60a5fa; }
+  body.light .insights { background: #ffffff; border-color: #e2e8f0; }
+  body.light .insights h3 { color: #64748b; }
+  body.light .insight-item { color: #334155; border-color: #f1f5f9; }
+
+  /* Comparação semanal */
+  .comparacao { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  .comp-card { background: #1e293b; border-radius: 12px; padding: 20px; border: 1px solid #334155; }
+  .comp-card .label { font-size: 12px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+  .comp-card .valor { font-size: 24px; font-weight: 700; color: #f8fafc; }
+  .comp-card .delta { font-size: 14px; font-weight: 600; margin-top: 4px; }
+  .comp-card .delta.up { color: #f87171; }
+  .comp-card .delta.down { color: #6ee7b7; }
+  .comp-card .sub { font-size: 12px; color: #64748b; margin-top: 2px; }
+  body.light .comp-card { background: #ffffff; border-color: #e2e8f0; }
+  body.light .comp-card .valor { color: #0f172a; }
+
+  /* Meta */
+  .meta-box { background: #1e293b; border-radius: 12px; padding: 20px; border: 1px solid #334155; }
+  .meta-box h3 { font-size: 14px; color: #94a3b8; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .meta-controls { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
+  .meta-controls input { background: #0f172a; color: #e2e8f0; border: 1px solid #334155; padding: 6px 12px; border-radius: 8px; font-size: 13px; width: 70px; }
+  .meta-controls label { font-size: 13px; color: #94a3b8; }
+  .meta-barra { height: 24px; background: #0f172a; border-radius: 12px; overflow: hidden; position: relative; }
+  .meta-fill { height: 100%; border-radius: 12px; transition: width 0.4s, background 0.4s; }
+  .meta-texto { font-size: 13px; margin-top: 8px; color: #cbd5e1; }
+  body.light .meta-box { background: #ffffff; border-color: #e2e8f0; }
+  body.light .meta-box h3 { color: #64748b; }
+  body.light .meta-controls input { background: #f8fafc; color: #0f172a; border-color: #e2e8f0; }
+  body.light .meta-barra { background: #f1f5f9; }
+  body.light .meta-texto { color: #334155; }
+
+  /* Botão PDF */
+  .btn-pdf { position: fixed; top: 20px; right: 170px; z-index: 999;
+    padding: 8px 16px; border-radius: 8px; border: 1px solid #334155;
+    background: #2563eb; color: white; cursor: pointer; font-size: 13px; }
+  .btn-pdf:hover { background: #1d4ed8; }
+
+  @media print {
+    .toggle-theme, .btn-pdf, .filtros, .meta-controls { display: none !important; }
+    body { background: white !important; color: black !important; }
+    .card, .grafico-box, .insights, .comp-card, .meta-box, .tabela-box { 
+      background: white !important; border: 1px solid #ccc !important; 
+      page-break-inside: avoid; }
+  }
 </style>
 </head>
 <body>
-<button class="toggle-theme" onclick="toggleTheme()">☀️ Light Mode</button>
+<button class="btn-pdf" onclick="window.print()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:6px"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>Exportar PDF</button>
+<button class="toggle-theme" onclick="toggleTheme()"><span id="theme-icon"></span><span id="theme-label">Light Mode</span></button>
 <header>
   <h1>Dashboard de Distrações no Estudo</h1>
   <p>Sistema de monitorização com Arduino Nano RP2040 Connect</p>
 </header>
 <div class="container">
   <div class="cards">
-    <div class="card red"><div class="valor">162</div><div class="label">Total de Distrações</div></div>
-    <div class="card yellow"><div class="valor">4h 44min</div><div class="label">Tempo Total Distraído</div></div>
-    <div class="card blue"><div class="valor">105s</div><div class="label">Duração Média</div></div>
+    <div class="card red"><div class="valor">226</div><div class="label">Total de Distrações</div></div>
+    <div class="card yellow"><div class="valor">3h 25min</div><div class="label">Tempo Total Distraído</div></div>
+    <div class="card blue"><div class="valor">55s</div><div class="label">Duração Média</div></div>
     <div class="card purple"><div class="valor">19h</div><div class="label">Hora com mais Distrações</div></div>
   </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="mostrarTab('visao', this)">Visão Geral</button>
+    <button class="tab" onclick="mostrarTab('analise', this)">Análise</button>
+    <button class="tab" onclick="mostrarTab('registo', this)">Registo</button>
+  </div>
+
+  <div class="tab-panel active" id="tab-visao">
+  <div class="insights-meta-grid">
+    <div class="insights">
+      <h3><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:6px"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5.76.76 1.23 1.52 1.41 2.5"/></svg>Insights</h3>
+      <div id="insights-lista"></div>
+    </div>
+
+    <div class="meta-box">
+      <h3><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:6px"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>Meta Diária</h3>
+      <div class="meta-controls">
+        <label>Objetivo máximo de distrações por dia:</label>
+        <input type="number" id="meta-input" value="5" min="1" max="50" onchange="atualizarMeta()">
+      </div>
+      <div class="meta-barra"><div class="meta-fill" id="meta-fill"></div></div>
+      <div class="meta-texto" id="meta-texto"></div>
+    </div>
+  </div>
+
+  <div class="comparacao" id="comparacao-box"></div>
+  </div>
+
+  <div class="tab-panel" id="tab-analise">
   <div class="filtros">
     <span>Ver por:</span>
     <button class="btn active" onclick="setVista('dia', this)">Dia</button>
@@ -90,7 +189,7 @@
   <div class="graficos-grid">
     <div class="grafico-box">
       <h3 id="titulo-principal">Distrações por Dia</h3>
-      <div class="grafico-hint" id="hint-principal">💡 Clica numa barra para ver o detalhe</div>
+      <div class="grafico-hint" id="hint-principal"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:4px"><path d="m9 9 5 12 1.8-5.2L21 14Z"/><path d="M7.2 2.2 8 5.1"/><path d="m5.1 8-2.9-.8"/><path d="M14 4.1 12 6"/><path d="m6 12-1.9 2"/></svg>Clica numa barra para ver o detalhe</div>
       <div class="breadcrumb" id="breadcrumb" style="display:none"></div>
       <canvas id="grafico-principal" height="120"></canvas>
     </div>
@@ -101,9 +200,12 @@
     </div>
   </div>
   <div class="graficos-grid2">
-    <div class="grafico-box"><h3>Tempo Total Distraído por Dia (minutos)</h3><canvas id="grafico-duracao" height="120"></canvas></div>
-    <div class="grafico-box" style="display:flex; flex-direction:column; justify-content:center;"><h3>Distribuição por Período do Dia</h3><div style="height: 250px;"><canvas id="grafico-periodos"></canvas></div></div>
-      </div>
+    <div class="grafico-box"><h3>Tempo Total Distraído por Dia (minutos)</h3><div style="height:260px;"><canvas id="grafico-duracao"></canvas></div></div>
+    <div class="grafico-box"><h3>Distribuição por Período do Dia</h3><div style="height:260px;"><canvas id="grafico-periodos"></canvas></div></div>
+  </div>
+  </div>
+
+  <div class="tab-panel" id="tab-registo">
   <div class="tabela-box">
     <h3>Registo Detalhado</h3>
     <div class="filtro-dia">
@@ -120,17 +222,21 @@
       <tbody id="tabela-body"></tbody>
     </table>
   </div>
+  </div>
 </div>
 <script>
-const dadosDia = {"2026-06-10": 8, "2026-06-11": 4, "2026-06-12": 3, "2026-06-14": 3, "2026-06-15": 9, "2026-06-16": 6, "2026-06-17": 6, "2026-06-18": 9, "2026-06-19": 4, "2026-06-21": 3, "2026-06-22": 5, "2026-06-23": 5, "2026-06-24": 9, "2026-06-25": 10, "2026-06-26": 7, "2026-06-27": 1, "2026-06-29": 7, "2026-06-30": 7, "2026-07-01": 8, "2026-07-02": 6, "2026-07-03": 5, "2026-07-06": 11, "2026-07-07": 9, "2026-07-08": 4, "2026-07-10": 5, "2026-07-19": 1, "2026-07-23": 5, "2026-08-25": 2};
-const duracaoDia = {"2026-06-10": 13, "2026-06-11": 360, "2026-06-12": 143, "2026-06-14": 231, "2026-06-15": 840, "2026-06-16": 534, "2026-06-17": 628, "2026-06-18": 953, "2026-06-19": 991, "2026-06-21": 513, "2026-06-22": 403, "2026-06-23": 554, "2026-06-24": 559, "2026-06-25": 967, "2026-06-26": 807, "2026-06-27": 20, "2026-06-29": 850, "2026-06-30": 875, "2026-07-01": 1045, "2026-07-02": 815, "2026-07-03": 669, "2026-07-06": 1421, "2026-07-07": 1804, "2026-07-08": 321, "2026-07-10": 637, "2026-07-19": 96, "2026-07-23": 27, "2026-08-25": 0};
-const dadosSemana = {"2026-W23": 18, "2026-W24": 37, "2026-W25": 37, "2026-W26": 33, "2026-W27": 29, "2026-W28": 1, "2026-W29": 5, "2026-W34": 2};
-const dadosMes = {"2026-06": 106, "2026-07": 54, "2026-08": 2};
-const detalhes = {"2026-06-10": [{"data": "2026-06-10", "hora_inicio": "10:58:03", "hora_fim": "10:58:04", "duracao": 0}, {"data": "2026-06-10", "hora_inicio": "11:00:46", "hora_fim": "11:00:46", "duracao": 0}, {"data": "2026-06-10", "hora_inicio": "11:00:47", "hora_fim": "11:00:48", "duracao": 0}, {"data": "2026-06-10", "hora_inicio": "11:05:49", "hora_fim": "11:05:50", "duracao": 1}, {"data": "2026-06-10", "hora_inicio": "11:05:50", "hora_fim": "11:05:59", "duracao": 9}, {"data": "2026-06-10", "hora_inicio": "11:06:07", "hora_fim": "11:06:09", "duracao": 2}, {"data": "2026-06-10", "hora_inicio": "11:38:35", "hora_fim": "11:38:36", "duracao": 1}, {"data": "2026-06-10", "hora_inicio": "11:38:37", "hora_fim": "11:38:37", "duracao": 0}], "2026-06-11": [{"data": "2026-06-11", "hora_inicio": "10:32:38", "hora_fim": "10:32:49", "duracao": 11}, {"data": "2026-06-11", "hora_inicio": "17:14:08", "hora_fim": "17:19:01", "duracao": 293}, {"data": "2026-06-11", "hora_inicio": "19:05:37", "hora_fim": "19:06:10", "duracao": 33}, {"data": "2026-06-11", "hora_inicio": "19:34:26", "hora_fim": "19:34:49", "duracao": 23}], "2026-06-12": [{"data": "2026-06-12", "hora_inicio": "11:06:05", "hora_fim": "11:07:20", "duracao": 75}, {"data": "2026-06-12", "hora_inicio": "17:44:27", "hora_fim": "17:45:16", "duracao": 49}, {"data": "2026-06-12", "hora_inicio": "19:16:51", "hora_fim": "19:17:10", "duracao": 19}], "2026-06-14": [{"data": "2026-06-14", "hora_inicio": "11:53:40", "hora_fim": "11:54:56", "duracao": 76}, {"data": "2026-06-14", "hora_inicio": "19:04:02", "hora_fim": "19:05:09", "duracao": 67}, {"data": "2026-06-14", "hora_inicio": "20:55:06", "hora_fim": "20:56:34", "duracao": 88}], "2026-06-15": [{"data": "2026-06-15", "hora_inicio": "10:32:31", "hora_fim": "10:32:37", "duracao": 6}, {"data": "2026-06-15", "hora_inicio": "11:13:42", "hora_fim": "11:14:08", "duracao": 26}, {"data": "2026-06-15", "hora_inicio": "11:53:49", "hora_fim": "11:56:47", "duracao": 178}, {"data": "2026-06-15", "hora_inicio": "12:17:59", "hora_fim": "12:19:40", "duracao": 101}, {"data": "2026-06-15", "hora_inicio": "15:08:15", "hora_fim": "15:12:32", "duracao": 257}, {"data": "2026-06-15", "hora_inicio": "16:27:57", "hora_fim": "16:29:13", "duracao": 76}, {"data": "2026-06-15", "hora_inicio": "18:25:17", "hora_fim": "18:25:40", "duracao": 23}, {"data": "2026-06-15", "hora_inicio": "19:40:10", "hora_fim": "19:41:11", "duracao": 61}, {"data": "2026-06-15", "hora_inicio": "21:13:41", "hora_fim": "21:15:33", "duracao": 112}], "2026-06-16": [{"data": "2026-06-16", "hora_inicio": "11:32:48", "hora_fim": "11:32:56", "duracao": 8}, {"data": "2026-06-16", "hora_inicio": "17:43:56", "hora_fim": "17:45:00", "duracao": 64}, {"data": "2026-06-16", "hora_inicio": "18:07:18", "hora_fim": "18:08:46", "duracao": 88}, {"data": "2026-06-16", "hora_inicio": "18:33:16", "hora_fim": "18:38:18", "duracao": 302}, {"data": "2026-06-16", "hora_inicio": "19:27:38", "hora_fim": "19:27:55", "duracao": 17}, {"data": "2026-06-16", "hora_inicio": "21:53:40", "hora_fim": "21:54:35", "duracao": 55}], "2026-06-17": [{"data": "2026-06-17", "hora_inicio": "09:05:46", "hora_fim": "09:06:24", "duracao": 38}, {"data": "2026-06-17", "hora_inicio": "11:56:53", "hora_fim": "11:59:54", "duracao": 181}, {"data": "2026-06-17", "hora_inicio": "16:58:00", "hora_fim": "16:59:32", "duracao": 92}, {"data": "2026-06-17", "hora_inicio": "20:16:33", "hora_fim": "20:20:21", "duracao": 228}, {"data": "2026-06-17", "hora_inicio": "22:48:46", "hora_fim": "22:49:55", "duracao": 69}, {"data": "2026-06-17", "hora_inicio": "22:49:08", "hora_fim": "22:49:28", "duracao": 20}], "2026-06-18": [{"data": "2026-06-18", "hora_inicio": "09:14:04", "hora_fim": "09:20:28", "duracao": 384}, {"data": "2026-06-18", "hora_inicio": "09:42:27", "hora_fim": "09:43:49", "duracao": 82}, {"data": "2026-06-18", "hora_inicio": "10:17:42", "hora_fim": "10:19:21", "duracao": 99}, {"data": "2026-06-18", "hora_inicio": "10:34:28", "hora_fim": "10:34:38", "duracao": 10}, {"data": "2026-06-18", "hora_inicio": "12:15:50", "hora_fim": "12:17:12", "duracao": 82}, {"data": "2026-06-18", "hora_inicio": "12:46:21", "hora_fim": "12:48:48", "duracao": 147}, {"data": "2026-06-18", "hora_inicio": "16:03:43", "hora_fim": "16:05:35", "duracao": 112}, {"data": "2026-06-18", "hora_inicio": "16:28:07", "hora_fim": "16:28:14", "duracao": 7}, {"data": "2026-06-18", "hora_inicio": "16:35:14", "hora_fim": "16:35:44", "duracao": 30}], "2026-06-19": [{"data": "2026-06-19", "hora_inicio": "09:05:59", "hora_fim": "09:08:59", "duracao": 180}, {"data": "2026-06-19", "hora_inicio": "09:24:16", "hora_fim": "09:31:12", "duracao": 416}, {"data": "2026-06-19", "hora_inicio": "12:30:13", "hora_fim": "12:32:28", "duracao": 135}, {"data": "2026-06-19", "hora_inicio": "20:28:51", "hora_fim": "20:33:11", "duracao": 260}], "2026-06-21": [{"data": "2026-06-21", "hora_inicio": "11:03:03", "hora_fim": "11:04:37", "duracao": 94}, {"data": "2026-06-21", "hora_inicio": "11:13:03", "hora_fim": "11:14:42", "duracao": 99}, {"data": "2026-06-21", "hora_inicio": "22:10:03", "hora_fim": "22:15:23", "duracao": 320}], "2026-06-22": [{"data": "2026-06-22", "hora_inicio": "09:39:05", "hora_fim": "09:40:49", "duracao": 104}, {"data": "2026-06-22", "hora_inicio": "14:00:29", "hora_fim": "14:02:11", "duracao": 102}, {"data": "2026-06-22", "hora_inicio": "15:25:08", "hora_fim": "15:26:16", "duracao": 68}, {"data": "2026-06-22", "hora_inicio": "18:59:16", "hora_fim": "18:59:43", "duracao": 27}, {"data": "2026-06-22", "hora_inicio": "19:55:15", "hora_fim": "19:56:57", "duracao": 102}], "2026-06-23": [{"data": "2026-06-23", "hora_inicio": "14:47:35", "hora_fim": "14:47:49", "duracao": 14}, {"data": "2026-06-23", "hora_inicio": "16:16:08", "hora_fim": "16:21:25", "duracao": 317}, {"data": "2026-06-23", "hora_inicio": "18:59:42", "hora_fim": "18:59:51", "duracao": 9}, {"data": "2026-06-23", "hora_inicio": "19:51:41", "hora_fim": "19:53:36", "duracao": 115}, {"data": "2026-06-23", "hora_inicio": "21:18:10", "hora_fim": "21:19:49", "duracao": 99}], "2026-06-24": [{"data": "2026-06-24", "hora_inicio": "10:02:19", "hora_fim": "10:02:54", "duracao": 35}, {"data": "2026-06-24", "hora_inicio": "11:32:31", "hora_fim": "11:32:37", "duracao": 6}, {"data": "2026-06-24", "hora_inicio": "12:53:17", "hora_fim": "12:53:32", "duracao": 15}, {"data": "2026-06-24", "hora_inicio": "18:39:47", "hora_fim": "18:39:59", "duracao": 12}, {"data": "2026-06-24", "hora_inicio": "19:00:07", "hora_fim": "19:00:34", "duracao": 27}, {"data": "2026-06-24", "hora_inicio": "19:16:10", "hora_fim": "19:20:31", "duracao": 261}, {"data": "2026-06-24", "hora_inicio": "20:43:15", "hora_fim": "20:44:30", "duracao": 75}, {"data": "2026-06-24", "hora_inicio": "20:56:26", "hora_fim": "20:56:54", "duracao": 28}, {"data": "2026-06-24", "hora_inicio": "22:02:53", "hora_fim": "22:04:33", "duracao": 100}], "2026-06-25": [{"data": "2026-06-25", "hora_inicio": "10:23:27", "hora_fim": "10:23:53", "duracao": 26}, {"data": "2026-06-25", "hora_inicio": "10:25:21", "hora_fim": "10:25:28", "duracao": 7}, {"data": "2026-06-25", "hora_inicio": "11:02:06", "hora_fim": "11:03:20", "duracao": 74}, {"data": "2026-06-25", "hora_inicio": "12:22:19", "hora_fim": "12:25:17", "duracao": 178}, {"data": "2026-06-25", "hora_inicio": "16:12:16", "hora_fim": "16:12:34", "duracao": 18}, {"data": "2026-06-25", "hora_inicio": "18:27:38", "hora_fim": "18:33:07", "duracao": 329}, {"data": "2026-06-25", "hora_inicio": "18:55:02", "hora_fim": "18:57:58", "duracao": 176}, {"data": "2026-06-25", "hora_inicio": "19:51:15", "hora_fim": "19:51:45", "duracao": 30}, {"data": "2026-06-25", "hora_inicio": "21:22:41", "hora_fim": "21:24:37", "duracao": 116}, {"data": "2026-06-25", "hora_inicio": "22:21:01", "hora_fim": "22:21:14", "duracao": 13}], "2026-06-26": [{"data": "2026-06-26", "hora_inicio": "11:29:28", "hora_fim": "11:30:25", "duracao": 57}, {"data": "2026-06-26", "hora_inicio": "12:43:47", "hora_fim": "12:51:24", "duracao": 457}, {"data": "2026-06-26", "hora_inicio": "14:46:57", "hora_fim": "14:48:06", "duracao": 69}, {"data": "2026-06-26", "hora_inicio": "16:10:42", "hora_fim": "16:11:03", "duracao": 21}, {"data": "2026-06-26", "hora_inicio": "18:25:44", "hora_fim": "18:25:53", "duracao": 9}, {"data": "2026-06-26", "hora_inicio": "18:35:53", "hora_fim": "18:36:07", "duracao": 14}, {"data": "2026-06-26", "hora_inicio": "19:21:05", "hora_fim": "19:24:05", "duracao": 180}], "2026-06-27": [{"data": "2026-06-27", "hora_inicio": "17:01:02", "hora_fim": "17:01:22", "duracao": 20}], "2026-06-29": [{"data": "2026-06-29", "hora_inicio": "14:53:40", "hora_fim": "14:54:09", "duracao": 29}, {"data": "2026-06-29", "hora_inicio": "15:39:52", "hora_fim": "15:44:01", "duracao": 249}, {"data": "2026-06-29", "hora_inicio": "15:42:33", "hora_fim": "15:50:05", "duracao": 452}, {"data": "2026-06-29", "hora_inicio": "16:28:57", "hora_fim": "16:29:17", "duracao": 20}, {"data": "2026-06-29", "hora_inicio": "17:49:27", "hora_fim": "17:49:57", "duracao": 30}, {"data": "2026-06-29", "hora_inicio": "18:31:25", "hora_fim": "18:31:50", "duracao": 25}, {"data": "2026-06-29", "hora_inicio": "22:29:03", "hora_fim": "22:29:48", "duracao": 45}], "2026-06-30": [{"data": "2026-06-30", "hora_inicio": "14:22:19", "hora_fim": "14:26:06", "duracao": 227}, {"data": "2026-06-30", "hora_inicio": "14:45:18", "hora_fim": "14:45:33", "duracao": 15}, {"data": "2026-06-30", "hora_inicio": "15:03:13", "hora_fim": "15:06:52", "duracao": 219}, {"data": "2026-06-30", "hora_inicio": "16:05:08", "hora_fim": "16:05:25", "duracao": 17}, {"data": "2026-06-30", "hora_inicio": "16:34:51", "hora_fim": "16:35:49", "duracao": 58}, {"data": "2026-06-30", "hora_inicio": "19:13:04", "hora_fim": "19:14:16", "duracao": 72}, {"data": "2026-06-30", "hora_inicio": "22:44:01", "hora_fim": "22:48:28", "duracao": 267}], "2026-07-01": [{"data": "2026-07-01", "hora_inicio": "09:15:12", "hora_fim": "09:19:51", "duracao": 279}, {"data": "2026-07-01", "hora_inicio": "12:37:36", "hora_fim": "12:38:16", "duracao": 40}, {"data": "2026-07-01", "hora_inicio": "14:24:21", "hora_fim": "14:25:42", "duracao": 81}, {"data": "2026-07-01", "hora_inicio": "14:29:20", "hora_fim": "14:30:38", "duracao": 78}, {"data": "2026-07-01", "hora_inicio": "15:16:53", "hora_fim": "15:16:58", "duracao": 5}, {"data": "2026-07-01", "hora_inicio": "17:22:14", "hora_fim": "17:24:07", "duracao": 113}, {"data": "2026-07-01", "hora_inicio": "17:55:29", "hora_fim": "17:55:42", "duracao": 13}, {"data": "2026-07-01", "hora_inicio": "18:58:08", "hora_fim": "19:05:24", "duracao": 436}], "2026-07-02": [{"data": "2026-07-02", "hora_inicio": "14:36:13", "hora_fim": "14:37:15", "duracao": 62}, {"data": "2026-07-02", "hora_inicio": "17:19:06", "hora_fim": "17:20:15", "duracao": 69}, {"data": "2026-07-02", "hora_inicio": "17:38:38", "hora_fim": "17:44:07", "duracao": 329}, {"data": "2026-07-02", "hora_inicio": "18:25:45", "hora_fim": "18:26:08", "duracao": 23}, {"data": "2026-07-02", "hora_inicio": "19:15:06", "hora_fim": "19:16:14", "duracao": 68}, {"data": "2026-07-02", "hora_inicio": "22:51:07", "hora_fim": "22:55:31", "duracao": 264}], "2026-07-03": [{"data": "2026-07-03", "hora_inicio": "12:52:31", "hora_fim": "12:52:47", "duracao": 16}, {"data": "2026-07-03", "hora_inicio": "16:23:04", "hora_fim": "16:24:17", "duracao": 73}, {"data": "2026-07-03", "hora_inicio": "16:37:17", "hora_fim": "16:38:18", "duracao": 61}, {"data": "2026-07-03", "hora_inicio": "18:45:09", "hora_fim": "18:46:45", "duracao": 96}, {"data": "2026-07-03", "hora_inicio": "21:39:51", "hora_fim": "21:46:54", "duracao": 423}], "2026-07-06": [{"data": "2026-07-06", "hora_inicio": "10:12:13", "hora_fim": "10:15:23", "duracao": 190}, {"data": "2026-07-06", "hora_inicio": "10:22:51", "hora_fim": "10:23:04", "duracao": 13}, {"data": "2026-07-06", "hora_inicio": "15:14:07", "hora_fim": "15:17:27", "duracao": 200}, {"data": "2026-07-06", "hora_inicio": "16:23:30", "hora_fim": "16:24:44", "duracao": 74}, {"data": "2026-07-06", "hora_inicio": "16:35:21", "hora_fim": "16:36:49", "duracao": 88}, {"data": "2026-07-06", "hora_inicio": "17:18:14", "hora_fim": "17:19:15", "duracao": 61}, {"data": "2026-07-06", "hora_inicio": "19:24:21", "hora_fim": "19:24:36", "duracao": 15}, {"data": "2026-07-06", "hora_inicio": "19:30:41", "hora_fim": "19:34:35", "duracao": 234}, {"data": "2026-07-06", "hora_inicio": "19:38:18", "hora_fim": "19:44:07", "duracao": 349}, {"data": "2026-07-06", "hora_inicio": "20:15:46", "hora_fim": "20:17:27", "duracao": 101}, {"data": "2026-07-06", "hora_inicio": "22:56:17", "hora_fim": "22:57:53", "duracao": 96}], "2026-07-07": [{"data": "2026-07-07", "hora_inicio": "09:09:09", "hora_fim": "09:12:26", "duracao": 197}, {"data": "2026-07-07", "hora_inicio": "09:45:34", "hora_fim": "09:45:40", "duracao": 6}, {"data": "2026-07-07", "hora_inicio": "10:07:35", "hora_fim": "10:12:10", "duracao": 275}, {"data": "2026-07-07", "hora_inicio": "15:21:11", "hora_fim": "15:27:15", "duracao": 364}, {"data": "2026-07-07", "hora_inicio": "19:14:49", "hora_fim": "19:16:16", "duracao": 87}, {"data": "2026-07-07", "hora_inicio": "21:06:55", "hora_fim": "21:07:09", "duracao": 14}, {"data": "2026-07-07", "hora_inicio": "21:07:52", "hora_fim": "21:08:12", "duracao": 20}, {"data": "2026-07-07", "hora_inicio": "21:55:37", "hora_fim": "22:01:55", "duracao": 378}, {"data": "2026-07-07", "hora_inicio": "22:18:44", "hora_fim": "22:26:27", "duracao": 463}], "2026-07-08": [{"data": "2026-07-08", "hora_inicio": "11:45:18", "hora_fim": "11:49:14", "duracao": 236}, {"data": "2026-07-08", "hora_inicio": "12:28:44", "hora_fim": "12:29:51", "duracao": 67}, {"data": "2026-07-08", "hora_inicio": "14:10:15", "hora_fim": "14:10:22", "duracao": 7}, {"data": "2026-07-08", "hora_inicio": "19:06:48", "hora_fim": "19:06:59", "duracao": 11}], "2026-07-10": [{"data": "2026-07-10", "hora_inicio": "16:14:41", "hora_fim": "16:14:54", "duracao": 13}, {"data": "2026-07-10", "hora_inicio": "17:03:10", "hora_fim": "17:07:42", "duracao": 272}, {"data": "2026-07-10", "hora_inicio": "19:25:17", "hora_fim": "19:26:50", "duracao": 93}, {"data": "2026-07-10", "hora_inicio": "19:37:42", "hora_fim": "19:40:32", "duracao": 170}, {"data": "2026-07-10", "hora_inicio": "19:58:18", "hora_fim": "19:59:47", "duracao": 89}], "2026-07-19": [{"data": "2026-07-19", "hora_inicio": "15:42:05", "hora_fim": "15:43:42", "duracao": 96}], "2026-07-23": [{"data": "2026-07-23", "hora_inicio": "17:15:00", "hora_fim": "17:15:03", "duracao": 2}, {"data": "2026-07-23", "hora_inicio": "17:15:03", "hora_fim": "17:15:03", "duracao": 0}, {"data": "2026-07-23", "hora_inicio": "17:15:05", "hora_fim": "17:15:05", "duracao": 0}, {"data": "2026-07-23", "hora_inicio": "17:15:06", "hora_fim": "17:15:11", "duracao": 5}, {"data": "2026-07-23", "hora_inicio": "17:56:50", "hora_fim": "17:57:10", "duracao": 20}], "2026-08-25": [{"data": "2026-08-25", "hora_inicio": "19:22:27", "hora_fim": "19:22:27", "duracao": 0}, {"data": "2026-08-25", "hora_inicio": "20:52:06", "hora_fim": "20:52:06", "duracao": 0}]};
-const horasPorDia = {"2026-06-10": {"10": 1, "11": 7}, "2026-06-11": {"10": 1, "17": 1, "19": 2}, "2026-06-12": {"11": 1, "17": 1, "19": 1}, "2026-06-14": {"11": 1, "19": 1, "20": 1}, "2026-06-15": {"10": 1, "11": 2, "12": 1, "15": 1, "16": 1, "18": 1, "19": 1, "21": 1}, "2026-06-16": {"11": 1, "17": 1, "18": 2, "19": 1, "21": 1}, "2026-06-17": {"9": 1, "11": 1, "16": 1, "20": 1, "22": 2}, "2026-06-18": {"9": 2, "10": 2, "12": 2, "16": 3}, "2026-06-19": {"9": 2, "12": 1, "20": 1}, "2026-06-21": {"11": 2, "22": 1}, "2026-06-22": {"9": 1, "14": 1, "15": 1, "18": 1, "19": 1}, "2026-06-23": {"14": 1, "16": 1, "18": 1, "19": 1, "21": 1}, "2026-06-24": {"10": 1, "11": 1, "12": 1, "18": 1, "19": 2, "20": 2, "22": 1}, "2026-06-25": {"10": 2, "11": 1, "12": 1, "16": 1, "18": 2, "19": 1, "21": 1, "22": 1}, "2026-06-26": {"11": 1, "12": 1, "14": 1, "16": 1, "18": 2, "19": 1}, "2026-06-27": {"17": 1}, "2026-06-29": {"14": 1, "15": 2, "16": 1, "17": 1, "18": 1, "22": 1}, "2026-06-30": {"14": 2, "15": 1, "16": 2, "19": 1, "22": 1}, "2026-07-01": {"9": 1, "12": 1, "14": 2, "15": 1, "17": 2, "18": 1}, "2026-07-02": {"14": 1, "17": 2, "18": 1, "19": 1, "22": 1}, "2026-07-03": {"12": 1, "16": 2, "18": 1, "21": 1}, "2026-07-06": {"10": 2, "15": 1, "16": 2, "17": 1, "19": 3, "20": 1, "22": 1}, "2026-07-07": {"9": 2, "10": 1, "15": 1, "19": 1, "21": 3, "22": 1}, "2026-07-08": {"11": 1, "12": 1, "14": 1, "19": 1}, "2026-07-10": {"16": 1, "17": 1, "19": 3}, "2026-07-19": {"15": 1}, "2026-07-23": {"17": 5}, "2026-08-25": {"19": 1, "20": 1}};
-const diasPorSemana = {"2026-W23": {"2026-06-10": 8, "2026-06-11": 4, "2026-06-12": 3, "2026-06-14": 3}, "2026-W24": {"2026-06-15": 9, "2026-06-16": 6, "2026-06-17": 6, "2026-06-18": 9, "2026-06-19": 4, "2026-06-21": 3}, "2026-W25": {"2026-06-22": 5, "2026-06-23": 5, "2026-06-24": 9, "2026-06-25": 10, "2026-06-26": 7, "2026-06-27": 1}, "2026-W26": {"2026-06-29": 7, "2026-06-30": 7, "2026-07-01": 8, "2026-07-02": 6, "2026-07-03": 5}, "2026-W27": {"2026-07-06": 11, "2026-07-07": 9, "2026-07-08": 4, "2026-07-10": 5}, "2026-W28": {"2026-07-19": 1}, "2026-W29": {"2026-07-23": 5}, "2026-W34": {"2026-08-25": 2}};
-const semanasPorMes = {"2026-06": {"2026-W23": 18, "2026-W24": 37, "2026-W25": 37, "2026-W26": 14}, "2026-07": {"2026-W26": 19, "2026-W27": 29, "2026-W28": 1, "2026-W29": 5}, "2026-08": {"2026-W34": 2}};
-const periodos = {"Manh\u00e3\n(9h-12h)": 39, "Tarde\n(12h-18h)": 61, "Fim de tarde\n(18h-20h)": 37, "Noite\n(20h+)": 25};
+const dadosDia = {"2026-06-10": 8, "2026-06-11": 8, "2026-06-12": 6, "2026-06-15": 3, "2026-06-16": 7, "2026-06-18": 11, "2026-06-19": 10, "2026-06-21": 4, "2026-06-22": 7, "2026-06-23": 7, "2026-06-24": 9, "2026-06-25": 8, "2026-06-26": 5, "2026-06-27": 4, "2026-06-29": 6, "2026-06-30": 7, "2026-07-01": 10, "2026-07-02": 9, "2026-07-03": 8, "2026-07-07": 9, "2026-07-08": 3, "2026-07-09": 3, "2026-07-10": 6, "2026-07-11": 1, "2026-07-12": 3, "2026-07-13": 4, "2026-07-14": 8, "2026-07-15": 8, "2026-07-16": 8, "2026-07-17": 4, "2026-07-20": 8, "2026-07-21": 8, "2026-07-22": 11, "2026-07-23": 5};
+const duracaoDia = {"2026-06-10": 13, "2026-06-11": 369, "2026-06-12": 942, "2026-06-15": 166, "2026-06-16": 87, "2026-06-18": 604, "2026-06-19": 660, "2026-06-21": 117, "2026-06-22": 248, "2026-06-23": 372, "2026-06-24": 923, "2026-06-25": 301, "2026-06-26": 203, "2026-06-27": 117, "2026-06-29": 369, "2026-06-30": 642, "2026-07-01": 337, "2026-07-02": 620, "2026-07-03": 744, "2026-07-07": 530, "2026-07-08": 115, "2026-07-09": 150, "2026-07-10": 153, "2026-07-11": 45, "2026-07-12": 46, "2026-07-13": 27, "2026-07-14": 576, "2026-07-15": 490, "2026-07-16": 393, "2026-07-17": 395, "2026-07-20": 252, "2026-07-21": 957, "2026-07-22": 215, "2026-07-23": 141};
+const dadosSemana = {"2026-W23": 22, "2026-W24": 35, "2026-W25": 40, "2026-W26": 40, "2026-W27": 25, "2026-W28": 32, "2026-W29": 32};
+const dadosMes = {"2026-06": 110, "2026-07": 116};
+const detalhes = {"2026-06-10": [{"data": "2026-06-10", "hora_inicio": "10:58:03", "hora_fim": "10:58:04", "duracao": 0}, {"data": "2026-06-10", "hora_inicio": "11:00:46", "hora_fim": "11:00:46", "duracao": 0}, {"data": "2026-06-10", "hora_inicio": "11:00:47", "hora_fim": "11:00:48", "duracao": 0}, {"data": "2026-06-10", "hora_inicio": "11:05:49", "hora_fim": "11:05:50", "duracao": 1}, {"data": "2026-06-10", "hora_inicio": "11:05:50", "hora_fim": "11:05:59", "duracao": 9}, {"data": "2026-06-10", "hora_inicio": "11:06:07", "hora_fim": "11:06:09", "duracao": 2}, {"data": "2026-06-10", "hora_inicio": "11:38:35", "hora_fim": "11:38:36", "duracao": 1}, {"data": "2026-06-10", "hora_inicio": "11:38:37", "hora_fim": "11:38:37", "duracao": 0}], "2026-06-11": [{"data": "2026-06-11", "hora_inicio": "09:31:11", "hora_fim": "09:31:13", "duracao": 2}, {"data": "2026-06-11", "hora_inicio": "11:12:52", "hora_fim": "11:13:05", "duracao": 13}, {"data": "2026-06-11", "hora_inicio": "11:40:42", "hora_fim": "11:40:50", "duracao": 8}, {"data": "2026-06-11", "hora_inicio": "17:54:17", "hora_fim": "17:54:21", "duracao": 4}, {"data": "2026-06-11", "hora_inicio": "19:12:32", "hora_fim": "19:12:46", "duracao": 14}, {"data": "2026-06-11", "hora_inicio": "21:18:30", "hora_fim": "21:18:39", "duracao": 9}, {"data": "2026-06-11", "hora_inicio": "21:39:15", "hora_fim": "21:44:17", "duracao": 302}, {"data": "2026-06-11", "hora_inicio": "22:24:11", "hora_fim": "22:24:28", "duracao": 17}], "2026-06-12": [{"data": "2026-06-12", "hora_inicio": "10:29:52", "hora_fim": "10:32:36", "duracao": 164}, {"data": "2026-06-12", "hora_inicio": "10:50:50", "hora_fim": "10:53:13", "duracao": 143}, {"data": "2026-06-12", "hora_inicio": "16:49:58", "hora_fim": "16:59:10", "duracao": 552}, {"data": "2026-06-12", "hora_inicio": "17:06:17", "hora_fim": "17:06:51", "duracao": 34}, {"data": "2026-06-12", "hora_inicio": "17:07:22", "hora_fim": "17:07:44", "duracao": 22}, {"data": "2026-06-12", "hora_inicio": "19:54:05", "hora_fim": "19:54:32", "duracao": 27}], "2026-06-15": [{"data": "2026-06-15", "hora_inicio": "10:32:57", "hora_fim": "10:33:27", "duracao": 30}, {"data": "2026-06-15", "hora_inicio": "10:40:02", "hora_fim": "10:40:10", "duracao": 8}, {"data": "2026-06-15", "hora_inicio": "19:48:27", "hora_fim": "19:50:35", "duracao": 128}], "2026-06-16": [{"data": "2026-06-16", "hora_inicio": "09:50:30", "hora_fim": "09:51:12", "duracao": 42}, {"data": "2026-06-16", "hora_inicio": "11:53:48", "hora_fim": "11:53:56", "duracao": 8}, {"data": "2026-06-16", "hora_inicio": "12:42:59", "hora_fim": "12:43:13", "duracao": 14}, {"data": "2026-06-16", "hora_inicio": "16:22:59", "hora_fim": "16:23:04", "duracao": 5}, {"data": "2026-06-16", "hora_inicio": "17:01:53", "hora_fim": "17:02:07", "duracao": 14}, {"data": "2026-06-16", "hora_inicio": "19:26:36", "hora_fim": "19:26:39", "duracao": 3}, {"data": "2026-06-16", "hora_inicio": "20:44:00", "hora_fim": "20:44:01", "duracao": 1}], "2026-06-18": [{"data": "2026-06-18", "hora_inicio": "09:31:04", "hora_fim": "09:31:15", "duracao": 11}, {"data": "2026-06-18", "hora_inicio": "09:42:56", "hora_fim": "09:43:04", "duracao": 8}, {"data": "2026-06-18", "hora_inicio": "09:47:09", "hora_fim": "09:49:02", "duracao": 113}, {"data": "2026-06-18", "hora_inicio": "10:13:43", "hora_fim": "10:14:22", "duracao": 39}, {"data": "2026-06-18", "hora_inicio": "10:27:10", "hora_fim": "10:27:25", "duracao": 15}, {"data": "2026-06-18", "hora_inicio": "14:55:12", "hora_fim": "14:56:51", "duracao": 99}, {"data": "2026-06-18", "hora_inicio": "16:34:17", "hora_fim": "16:35:38", "duracao": 81}, {"data": "2026-06-18", "hora_inicio": "17:38:53", "hora_fim": "17:39:49", "duracao": 56}, {"data": "2026-06-18", "hora_inicio": "19:26:31", "hora_fim": "19:27:57", "duracao": 86}, {"data": "2026-06-18", "hora_inicio": "19:36:45", "hora_fim": "19:36:49", "duracao": 4}, {"data": "2026-06-18", "hora_inicio": "20:30:39", "hora_fim": "20:32:11", "duracao": 92}], "2026-06-19": [{"data": "2026-06-19", "hora_inicio": "10:58:52", "hora_fim": "10:59:08", "duracao": 16}, {"data": "2026-06-19", "hora_inicio": "14:05:17", "hora_fim": "14:05:59", "duracao": 42}, {"data": "2026-06-19", "hora_inicio": "15:47:56", "hora_fim": "15:49:56", "duracao": 120}, {"data": "2026-06-19", "hora_inicio": "15:50:44", "hora_fim": "15:50:56", "duracao": 12}, {"data": "2026-06-19", "hora_inicio": "17:35:38", "hora_fim": "17:36:57", "duracao": 79}, {"data": "2026-06-19", "hora_inicio": "17:45:42", "hora_fim": "17:47:50", "duracao": 128}, {"data": "2026-06-19", "hora_inicio": "17:55:16", "hora_fim": "17:58:01", "duracao": 165}, {"data": "2026-06-19", "hora_inicio": "18:09:08", "hora_fim": "18:09:46", "duracao": 38}, {"data": "2026-06-19", "hora_inicio": "18:25:32", "hora_fim": "18:26:17", "duracao": 45}, {"data": "2026-06-19", "hora_inicio": "22:49:49", "hora_fim": "22:50:04", "duracao": 15}], "2026-06-21": [{"data": "2026-06-21", "hora_inicio": "09:28:47", "hora_fim": "09:30:27", "duracao": 100}, {"data": "2026-06-21", "hora_inicio": "18:47:54", "hora_fim": "18:47:55", "duracao": 1}, {"data": "2026-06-21", "hora_inicio": "19:31:25", "hora_fim": "19:31:28", "duracao": 3}, {"data": "2026-06-21", "hora_inicio": "19:34:54", "hora_fim": "19:35:07", "duracao": 13}], "2026-06-22": [{"data": "2026-06-22", "hora_inicio": "10:35:46", "hora_fim": "10:35:54", "duracao": 8}, {"data": "2026-06-22", "hora_inicio": "11:30:13", "hora_fim": "11:30:21", "duracao": 8}, {"data": "2026-06-22", "hora_inicio": "15:45:04", "hora_fim": "15:45:49", "duracao": 45}, {"data": "2026-06-22", "hora_inicio": "17:42:05", "hora_fim": "17:42:43", "duracao": 38}, {"data": "2026-06-22", "hora_inicio": "17:49:47", "hora_fim": "17:50:19", "duracao": 32}, {"data": "2026-06-22", "hora_inicio": "18:52:11", "hora_fim": "18:53:47", "duracao": 96}, {"data": "2026-06-22", "hora_inicio": "19:59:16", "hora_fim": "19:59:37", "duracao": 21}], "2026-06-23": [{"data": "2026-06-23", "hora_inicio": "17:22:50", "hora_fim": "17:22:54", "duracao": 4}, {"data": "2026-06-23", "hora_inicio": "17:28:18", "hora_fim": "17:28:36", "duracao": 18}, {"data": "2026-06-23", "hora_inicio": "18:16:22", "hora_fim": "18:16:58", "duracao": 36}, {"data": "2026-06-23", "hora_inicio": "18:21:21", "hora_fim": "18:21:26", "duracao": 5}, {"data": "2026-06-23", "hora_inicio": "18:53:16", "hora_fim": "18:53:17", "duracao": 1}, {"data": "2026-06-23", "hora_inicio": "19:10:22", "hora_fim": "19:15:21", "duracao": 299}, {"data": "2026-06-23", "hora_inicio": "21:27:12", "hora_fim": "21:27:21", "duracao": 9}], "2026-06-24": [{"data": "2026-06-24", "hora_inicio": "14:18:28", "hora_fim": "14:19:01", "duracao": 33}, {"data": "2026-06-24", "hora_inicio": "16:58:24", "hora_fim": "16:58:30", "duracao": 6}, {"data": "2026-06-24", "hora_inicio": "17:28:43", "hora_fim": "17:32:48", "duracao": 245}, {"data": "2026-06-24", "hora_inicio": "18:56:52", "hora_fim": "18:57:26", "duracao": 34}, {"data": "2026-06-24", "hora_inicio": "19:01:38", "hora_fim": "19:08:06", "duracao": 388}, {"data": "2026-06-24", "hora_inicio": "19:34:22", "hora_fim": "19:34:25", "duracao": 3}, {"data": "2026-06-24", "hora_inicio": "19:43:28", "hora_fim": "19:43:40", "duracao": 12}, {"data": "2026-06-24", "hora_inicio": "20:24:24", "hora_fim": "20:27:36", "duracao": 192}, {"data": "2026-06-24", "hora_inicio": "20:27:39", "hora_fim": "20:27:49", "duracao": 10}], "2026-06-25": [{"data": "2026-06-25", "hora_inicio": "10:40:27", "hora_fim": "10:43:20", "duracao": 173}, {"data": "2026-06-25", "hora_inicio": "11:21:27", "hora_fim": "11:21:39", "duracao": 12}, {"data": "2026-06-25", "hora_inicio": "12:46:40", "hora_fim": "12:46:48", "duracao": 8}, {"data": "2026-06-25", "hora_inicio": "16:39:27", "hora_fim": "16:39:36", "duracao": 9}, {"data": "2026-06-25", "hora_inicio": "17:59:59", "hora_fim": "18:00:03", "duracao": 4}, {"data": "2026-06-25", "hora_inicio": "18:30:37", "hora_fim": "18:31:08", "duracao": 31}, {"data": "2026-06-25", "hora_inicio": "18:49:50", "hora_fim": "18:50:05", "duracao": 15}, {"data": "2026-06-25", "hora_inicio": "21:56:58", "hora_fim": "21:57:47", "duracao": 49}], "2026-06-26": [{"data": "2026-06-26", "hora_inicio": "10:12:23", "hora_fim": "10:12:45", "duracao": 22}, {"data": "2026-06-26", "hora_inicio": "10:34:34", "hora_fim": "10:34:42", "duracao": 8}, {"data": "2026-06-26", "hora_inicio": "11:22:19", "hora_fim": "11:22:46", "duracao": 27}, {"data": "2026-06-26", "hora_inicio": "11:35:50", "hora_fim": "11:37:50", "duracao": 120}, {"data": "2026-06-26", "hora_inicio": "18:45:42", "hora_fim": "18:46:08", "duracao": 26}], "2026-06-27": [{"data": "2026-06-27", "hora_inicio": "12:51:50", "hora_fim": "12:52:40", "duracao": 50}, {"data": "2026-06-27", "hora_inicio": "14:30:23", "hora_fim": "14:30:32", "duracao": 9}, {"data": "2026-06-27", "hora_inicio": "17:20:47", "hora_fim": "17:20:57", "duracao": 10}, {"data": "2026-06-27", "hora_inicio": "19:14:57", "hora_fim": "19:15:45", "duracao": 48}], "2026-06-29": [{"data": "2026-06-29", "hora_inicio": "12:31:45", "hora_fim": "12:32:13", "duracao": 28}, {"data": "2026-06-29", "hora_inicio": "12:48:07", "hora_fim": "12:48:08", "duracao": 1}, {"data": "2026-06-29", "hora_inicio": "17:11:25", "hora_fim": "17:12:16", "duracao": 51}, {"data": "2026-06-29", "hora_inicio": "18:31:38", "hora_fim": "18:31:44", "duracao": 6}, {"data": "2026-06-29", "hora_inicio": "19:19:21", "hora_fim": "19:23:56", "duracao": 275}, {"data": "2026-06-29", "hora_inicio": "19:43:27", "hora_fim": "19:43:35", "duracao": 8}], "2026-06-30": [{"data": "2026-06-30", "hora_inicio": "10:10:59", "hora_fim": "10:15:03", "duracao": 244}, {"data": "2026-06-30", "hora_inicio": "14:59:07", "hora_fim": "15:03:50", "duracao": 283}, {"data": "2026-06-30", "hora_inicio": "15:55:11", "hora_fim": "15:55:14", "duracao": 3}, {"data": "2026-06-30", "hora_inicio": "16:08:59", "hora_fim": "16:09:07", "duracao": 8}, {"data": "2026-06-30", "hora_inicio": "16:57:55", "hora_fim": "16:58:00", "duracao": 5}, {"data": "2026-06-30", "hora_inicio": "17:17:48", "hora_fim": "17:18:55", "duracao": 67}, {"data": "2026-06-30", "hora_inicio": "17:39:57", "hora_fim": "17:40:29", "duracao": 32}], "2026-07-01": [{"data": "2026-07-01", "hora_inicio": "10:21:58", "hora_fim": "10:22:11", "duracao": 13}, {"data": "2026-07-01", "hora_inicio": "11:19:51", "hora_fim": "11:20:00", "duracao": 9}, {"data": "2026-07-01", "hora_inicio": "11:25:08", "hora_fim": "11:25:27", "duracao": 19}, {"data": "2026-07-01", "hora_inicio": "14:25:06", "hora_fim": "14:25:08", "duracao": 2}, {"data": "2026-07-01", "hora_inicio": "14:40:37", "hora_fim": "14:41:11", "duracao": 34}, {"data": "2026-07-01", "hora_inicio": "16:15:34", "hora_fim": "16:15:45", "duracao": 11}, {"data": "2026-07-01", "hora_inicio": "18:41:24", "hora_fim": "18:42:28", "duracao": 64}, {"data": "2026-07-01", "hora_inicio": "18:50:45", "hora_fim": "18:53:13", "duracao": 148}, {"data": "2026-07-01", "hora_inicio": "19:02:50", "hora_fim": "19:02:56", "duracao": 6}, {"data": "2026-07-01", "hora_inicio": "19:11:45", "hora_fim": "19:12:16", "duracao": 31}], "2026-07-02": [{"data": "2026-07-02", "hora_inicio": "09:13:25", "hora_fim": "09:13:27", "duracao": 2}, {"data": "2026-07-02", "hora_inicio": "15:45:25", "hora_fim": "15:45:42", "duracao": 17}, {"data": "2026-07-02", "hora_inicio": "17:09:10", "hora_fim": "17:09:23", "duracao": 13}, {"data": "2026-07-02", "hora_inicio": "17:32:36", "hora_fim": "17:33:55", "duracao": 79}, {"data": "2026-07-02", "hora_inicio": "17:33:55", "hora_fim": "17:33:58", "duracao": 3}, {"data": "2026-07-02", "hora_inicio": "17:59:22", "hora_fim": "18:02:51", "duracao": 209}, {"data": "2026-07-02", "hora_inicio": "20:07:06", "hora_fim": "20:08:49", "duracao": 103}, {"data": "2026-07-02", "hora_inicio": "21:28:44", "hora_fim": "21:30:21", "duracao": 97}, {"data": "2026-07-02", "hora_inicio": "22:12:13", "hora_fim": "22:13:50", "duracao": 97}], "2026-07-03": [{"data": "2026-07-03", "hora_inicio": "09:27:20", "hora_fim": "09:28:42", "duracao": 82}, {"data": "2026-07-03", "hora_inicio": "09:53:07", "hora_fim": "09:53:12", "duracao": 5}, {"data": "2026-07-03", "hora_inicio": "12:03:33", "hora_fim": "12:03:56", "duracao": 23}, {"data": "2026-07-03", "hora_inicio": "16:04:58", "hora_fim": "16:05:02", "duracao": 4}, {"data": "2026-07-03", "hora_inicio": "18:06:19", "hora_fim": "18:11:29", "duracao": 310}, {"data": "2026-07-03", "hora_inicio": "19:06:28", "hora_fim": "19:11:05", "duracao": 277}, {"data": "2026-07-03", "hora_inicio": "19:13:53", "hora_fim": "19:14:11", "duracao": 18}, {"data": "2026-07-03", "hora_inicio": "19:56:43", "hora_fim": "19:57:08", "duracao": 25}], "2026-07-07": [{"data": "2026-07-07", "hora_inicio": "10:01:34", "hora_fim": "10:01:41", "duracao": 7}, {"data": "2026-07-07", "hora_inicio": "11:14:00", "hora_fim": "11:14:11", "duracao": 11}, {"data": "2026-07-07", "hora_inicio": "15:31:02", "hora_fim": "15:35:43", "duracao": 281}, {"data": "2026-07-07", "hora_inicio": "15:48:19", "hora_fim": "15:48:31", "duracao": 12}, {"data": "2026-07-07", "hora_inicio": "16:42:25", "hora_fim": "16:42:39", "duracao": 14}, {"data": "2026-07-07", "hora_inicio": "17:18:58", "hora_fim": "17:20:58", "duracao": 120}, {"data": "2026-07-07", "hora_inicio": "18:35:45", "hora_fim": "18:36:00", "duracao": 15}, {"data": "2026-07-07", "hora_inicio": "19:14:24", "hora_fim": "19:15:06", "duracao": 42}, {"data": "2026-07-07", "hora_inicio": "19:15:42", "hora_fim": "19:16:10", "duracao": 28}], "2026-07-08": [{"data": "2026-07-08", "hora_inicio": "15:14:29", "hora_fim": "15:14:49", "duracao": 20}, {"data": "2026-07-08", "hora_inicio": "16:12:21", "hora_fim": "16:12:24", "duracao": 3}, {"data": "2026-07-08", "hora_inicio": "21:05:49", "hora_fim": "21:07:21", "duracao": 92}], "2026-07-09": [{"data": "2026-07-09", "hora_inicio": "09:37:35", "hora_fim": "09:37:48", "duracao": 13}, {"data": "2026-07-09", "hora_inicio": "11:08:27", "hora_fim": "11:10:16", "duracao": 109}, {"data": "2026-07-09", "hora_inicio": "15:25:11", "hora_fim": "15:25:39", "duracao": 28}], "2026-07-10": [{"data": "2026-07-10", "hora_inicio": "11:25:07", "hora_fim": "11:25:46", "duracao": 39}, {"data": "2026-07-10", "hora_inicio": "17:54:10", "hora_fim": "17:54:52", "duracao": 42}, {"data": "2026-07-10", "hora_inicio": "18:12:40", "hora_fim": "18:13:24", "duracao": 44}, {"data": "2026-07-10", "hora_inicio": "18:32:01", "hora_fim": "18:32:19", "duracao": 18}, {"data": "2026-07-10", "hora_inicio": "18:59:54", "hora_fim": "18:59:59", "duracao": 5}, {"data": "2026-07-10", "hora_inicio": "19:24:01", "hora_fim": "19:24:06", "duracao": 5}], "2026-07-11": [{"data": "2026-07-11", "hora_inicio": "19:52:11", "hora_fim": "19:52:56", "duracao": 45}], "2026-07-12": [{"data": "2026-07-12", "hora_inicio": "12:04:07", "hora_fim": "12:04:40", "duracao": 33}, {"data": "2026-07-12", "hora_inicio": "20:33:39", "hora_fim": "20:33:44", "duracao": 5}, {"data": "2026-07-12", "hora_inicio": "21:45:24", "hora_fim": "21:45:32", "duracao": 8}], "2026-07-13": [{"data": "2026-07-13", "hora_inicio": "10:53:02", "hora_fim": "10:53:09", "duracao": 7}, {"data": "2026-07-13", "hora_inicio": "14:00:01", "hora_fim": "14:00:09", "duracao": 8}, {"data": "2026-07-13", "hora_inicio": "16:28:41", "hora_fim": "16:28:45", "duracao": 4}, {"data": "2026-07-13", "hora_inicio": "18:43:55", "hora_fim": "18:44:03", "duracao": 8}], "2026-07-14": [{"data": "2026-07-14", "hora_inicio": "10:58:02", "hora_fim": "10:58:05", "duracao": 3}, {"data": "2026-07-14", "hora_inicio": "11:08:35", "hora_fim": "11:08:50", "duracao": 15}, {"data": "2026-07-14", "hora_inicio": "15:11:20", "hora_fim": "15:13:17", "duracao": 117}, {"data": "2026-07-14", "hora_inicio": "16:24:23", "hora_fim": "16:25:02", "duracao": 39}, {"data": "2026-07-14", "hora_inicio": "17:10:55", "hora_fim": "17:11:44", "duracao": 49}, {"data": "2026-07-14", "hora_inicio": "17:43:13", "hora_fim": "17:47:18", "duracao": 245}, {"data": "2026-07-14", "hora_inicio": "19:09:10", "hora_fim": "19:09:31", "duracao": 21}, {"data": "2026-07-14", "hora_inicio": "20:19:03", "hora_fim": "20:20:30", "duracao": 87}], "2026-07-15": [{"data": "2026-07-15", "hora_inicio": "09:35:56", "hora_fim": "09:36:07", "duracao": 11}, {"data": "2026-07-15", "hora_inicio": "14:41:40", "hora_fim": "14:41:59", "duracao": 19}, {"data": "2026-07-15", "hora_inicio": "15:03:55", "hora_fim": "15:04:37", "duracao": 42}, {"data": "2026-07-15", "hora_inicio": "16:24:40", "hora_fim": "16:25:11", "duracao": 31}, {"data": "2026-07-15", "hora_inicio": "18:55:00", "hora_fim": "18:55:57", "duracao": 57}, {"data": "2026-07-15", "hora_inicio": "19:04:58", "hora_fim": "19:09:31", "duracao": 273}, {"data": "2026-07-15", "hora_inicio": "20:03:02", "hora_fim": "20:03:16", "duracao": 14}, {"data": "2026-07-15", "hora_inicio": "20:06:16", "hora_fim": "20:06:59", "duracao": 43}], "2026-07-16": [{"data": "2026-07-16", "hora_inicio": "16:39:19", "hora_fim": "16:39:27", "duracao": 8}, {"data": "2026-07-16", "hora_inicio": "17:20:14", "hora_fim": "17:20:24", "duracao": 10}, {"data": "2026-07-16", "hora_inicio": "17:23:08", "hora_fim": "17:23:52", "duracao": 44}, {"data": "2026-07-16", "hora_inicio": "17:25:31", "hora_fim": "17:25:46", "duracao": 15}, {"data": "2026-07-16", "hora_inicio": "17:57:11", "hora_fim": "17:57:22", "duracao": 11}, {"data": "2026-07-16", "hora_inicio": "18:56:34", "hora_fim": "18:56:41", "duracao": 7}, {"data": "2026-07-16", "hora_inicio": "20:41:08", "hora_fim": "20:41:12", "duracao": 4}, {"data": "2026-07-16", "hora_inicio": "22:28:43", "hora_fim": "22:33:37", "duracao": 294}], "2026-07-17": [{"data": "2026-07-17", "hora_inicio": "16:00:11", "hora_fim": "16:00:36", "duracao": 25}, {"data": "2026-07-17", "hora_inicio": "18:08:01", "hora_fim": "18:08:07", "duracao": 6}, {"data": "2026-07-17", "hora_inicio": "19:21:14", "hora_fim": "19:27:07", "duracao": 353}, {"data": "2026-07-17", "hora_inicio": "19:29:58", "hora_fim": "19:30:09", "duracao": 11}], "2026-07-20": [{"data": "2026-07-20", "hora_inicio": "09:40:59", "hora_fim": "09:42:38", "duracao": 99}, {"data": "2026-07-20", "hora_inicio": "11:06:50", "hora_fim": "11:08:05", "duracao": 75}, {"data": "2026-07-20", "hora_inicio": "12:40:27", "hora_fim": "12:40:32", "duracao": 5}, {"data": "2026-07-20", "hora_inicio": "19:03:12", "hora_fim": "19:03:29", "duracao": 17}, {"data": "2026-07-20", "hora_inicio": "19:26:51", "hora_fim": "19:26:53", "duracao": 2}, {"data": "2026-07-20", "hora_inicio": "19:30:35", "hora_fim": "19:30:38", "duracao": 3}, {"data": "2026-07-20", "hora_inicio": "19:32:22", "hora_fim": "19:33:07", "duracao": 45}, {"data": "2026-07-20", "hora_inicio": "19:57:18", "hora_fim": "19:57:24", "duracao": 6}], "2026-07-21": [{"data": "2026-07-21", "hora_inicio": "10:44:50", "hora_fim": "10:45:26", "duracao": 36}, {"data": "2026-07-21", "hora_inicio": "10:56:26", "hora_fim": "10:56:38", "duracao": 12}, {"data": "2026-07-21", "hora_inicio": "15:01:27", "hora_fim": "15:01:29", "duracao": 2}, {"data": "2026-07-21", "hora_inicio": "17:48:31", "hora_fim": "17:51:04", "duracao": 153}, {"data": "2026-07-21", "hora_inicio": "19:32:18", "hora_fim": "19:32:39", "duracao": 21}, {"data": "2026-07-21", "hora_inicio": "19:56:24", "hora_fim": "20:06:22", "duracao": 598}, {"data": "2026-07-21", "hora_inicio": "21:09:38", "hora_fim": "21:10:14", "duracao": 36}, {"data": "2026-07-21", "hora_inicio": "21:20:46", "hora_fim": "21:22:25", "duracao": 99}], "2026-07-22": [{"data": "2026-07-22", "hora_inicio": "11:27:07", "hora_fim": "11:27:17", "duracao": 10}, {"data": "2026-07-22", "hora_inicio": "12:07:08", "hora_fim": "12:07:13", "duracao": 5}, {"data": "2026-07-22", "hora_inicio": "12:09:18", "hora_fim": "12:09:19", "duracao": 1}, {"data": "2026-07-22", "hora_inicio": "15:18:56", "hora_fim": "15:19:04", "duracao": 8}, {"data": "2026-07-22", "hora_inicio": "16:37:48", "hora_fim": "16:38:00", "duracao": 12}, {"data": "2026-07-22", "hora_inicio": "16:45:09", "hora_fim": "16:45:21", "duracao": 12}, {"data": "2026-07-22", "hora_inicio": "17:05:39", "hora_fim": "17:05:41", "duracao": 2}, {"data": "2026-07-22", "hora_inicio": "17:53:18", "hora_fim": "17:53:55", "duracao": 37}, {"data": "2026-07-22", "hora_inicio": "19:25:43", "hora_fim": "19:26:08", "duracao": 25}, {"data": "2026-07-22", "hora_inicio": "20:28:29", "hora_fim": "20:29:57", "duracao": 88}, {"data": "2026-07-22", "hora_inicio": "21:14:34", "hora_fim": "21:14:49", "duracao": 15}], "2026-07-23": [{"data": "2026-07-23", "hora_inicio": "11:08:35", "hora_fim": "11:08:38", "duracao": 3}, {"data": "2026-07-23", "hora_inicio": "12:06:25", "hora_fim": "12:07:05", "duracao": 40}, {"data": "2026-07-23", "hora_inicio": "15:14:40", "hora_fim": "15:15:15", "duracao": 35}, {"data": "2026-07-23", "hora_inicio": "17:41:10", "hora_fim": "17:41:31", "duracao": 21}, {"data": "2026-07-23", "hora_inicio": "18:01:38", "hora_fim": "18:02:20", "duracao": 42}]};
+const horasPorDia = {"2026-06-10": {"10": 1, "11": 7}, "2026-06-11": {"9": 1, "11": 2, "17": 1, "19": 1, "21": 2, "22": 1}, "2026-06-12": {"10": 2, "16": 1, "17": 2, "19": 1}, "2026-06-15": {"10": 2, "19": 1}, "2026-06-16": {"9": 1, "11": 1, "12": 1, "16": 1, "17": 1, "19": 1, "20": 1}, "2026-06-18": {"9": 3, "10": 2, "14": 1, "16": 1, "17": 1, "19": 2, "20": 1}, "2026-06-19": {"10": 1, "14": 1, "15": 2, "17": 3, "18": 2, "22": 1}, "2026-06-21": {"9": 1, "18": 1, "19": 2}, "2026-06-22": {"10": 1, "11": 1, "15": 1, "17": 2, "18": 1, "19": 1}, "2026-06-23": {"17": 2, "18": 3, "19": 1, "21": 1}, "2026-06-24": {"14": 1, "16": 1, "17": 1, "18": 1, "19": 3, "20": 2}, "2026-06-25": {"10": 1, "11": 1, "12": 1, "16": 1, "17": 1, "18": 2, "21": 1}, "2026-06-26": {"10": 2, "11": 2, "18": 1}, "2026-06-27": {"12": 1, "14": 1, "17": 1, "19": 1}, "2026-06-29": {"12": 2, "17": 1, "18": 1, "19": 2}, "2026-06-30": {"10": 1, "14": 1, "15": 1, "16": 2, "17": 2}, "2026-07-01": {"10": 1, "11": 2, "14": 2, "16": 1, "18": 2, "19": 2}, "2026-07-02": {"9": 1, "15": 1, "17": 4, "20": 1, "21": 1, "22": 1}, "2026-07-03": {"9": 2, "12": 1, "16": 1, "18": 1, "19": 3}, "2026-07-07": {"10": 1, "11": 1, "15": 2, "16": 1, "17": 1, "18": 1, "19": 2}, "2026-07-08": {"15": 1, "16": 1, "21": 1}, "2026-07-09": {"9": 1, "11": 1, "15": 1}, "2026-07-10": {"11": 1, "17": 1, "18": 3, "19": 1}, "2026-07-11": {"19": 1}, "2026-07-12": {"12": 1, "20": 1, "21": 1}, "2026-07-13": {"10": 1, "14": 1, "16": 1, "18": 1}, "2026-07-14": {"10": 1, "11": 1, "15": 1, "16": 1, "17": 2, "19": 1, "20": 1}, "2026-07-15": {"9": 1, "14": 1, "15": 1, "16": 1, "18": 1, "19": 1, "20": 2}, "2026-07-16": {"16": 1, "17": 4, "18": 1, "20": 1, "22": 1}, "2026-07-17": {"16": 1, "18": 1, "19": 2}, "2026-07-20": {"9": 1, "11": 1, "12": 1, "19": 5}, "2026-07-21": {"10": 2, "15": 1, "17": 1, "19": 2, "21": 2}, "2026-07-22": {"11": 1, "12": 2, "15": 1, "16": 2, "17": 2, "19": 1, "20": 1, "21": 1}, "2026-07-23": {"11": 1, "12": 1, "15": 1, "17": 1, "18": 1}};
+const diasPorSemana = {"2026-W23": {"2026-06-10": 8, "2026-06-11": 8, "2026-06-12": 6}, "2026-W24": {"2026-06-15": 3, "2026-06-16": 7, "2026-06-18": 11, "2026-06-19": 10, "2026-06-21": 4}, "2026-W25": {"2026-06-22": 7, "2026-06-23": 7, "2026-06-24": 9, "2026-06-25": 8, "2026-06-26": 5, "2026-06-27": 4}, "2026-W26": {"2026-06-29": 6, "2026-06-30": 7, "2026-07-01": 10, "2026-07-02": 9, "2026-07-03": 8}, "2026-W27": {"2026-07-07": 9, "2026-07-08": 3, "2026-07-09": 3, "2026-07-10": 6, "2026-07-11": 1, "2026-07-12": 3}, "2026-W28": {"2026-07-13": 4, "2026-07-14": 8, "2026-07-15": 8, "2026-07-16": 8, "2026-07-17": 4}, "2026-W29": {"2026-07-20": 8, "2026-07-21": 8, "2026-07-22": 11, "2026-07-23": 5}};
+const semanasPorMes = {"2026-06": {"2026-W23": 22, "2026-W24": 35, "2026-W25": 40, "2026-W26": 13}, "2026-07": {"2026-W26": 27, "2026-W27": 25, "2026-W28": 32, "2026-W29": 32}};
+const periodos = {"Manh\u00e3\n(9h-12h)": 54, "Tarde\n(12h-18h)": 86, "Fim de tarde\n(18h-20h)": 61, "Noite\n(20h+)": 25};
+const insights = ["A tua hora mais cr\u00edtica \u00e9 \u00e0s <b>19h</b> - \u00e9 quando te distrais mais.", "Concentras <b>38%</b> das distra\u00e7\u00f5es no per\u00edodo da <b>tarde</b>.", "<b>S\u00e1bado</b> \u00e9 o teu dia mais focado; <b>quarta</b> o mais distra\u00eddo.", "<b>58%</b> das tuas distra\u00e7\u00f5es s\u00e3o r\u00e1pidas (menos de 30 segundos) - verifica\u00e7\u00f5es reflexas do telem\u00f3vel."];
+const comparacao = {"n_atual": 32, "n_anterior": 32, "delta_n": 0, "min_atual": 26, "min_anterior": 31, "delta_seg": -17};
+const dadosDiaMeta = {"2026-06-10": 8, "2026-06-11": 8, "2026-06-12": 6, "2026-06-15": 3, "2026-06-16": 7, "2026-06-18": 11, "2026-06-19": 10, "2026-06-21": 4, "2026-06-22": 7, "2026-06-23": 7, "2026-06-24": 9, "2026-06-25": 8, "2026-06-26": 5, "2026-06-27": 4, "2026-06-29": 6, "2026-06-30": 7, "2026-07-01": 10, "2026-07-02": 9, "2026-07-03": 8, "2026-07-07": 9, "2026-07-08": 3, "2026-07-09": 3, "2026-07-10": 6, "2026-07-11": 1, "2026-07-12": 3, "2026-07-13": 4, "2026-07-14": 8, "2026-07-15": 8, "2026-07-16": 8, "2026-07-17": 4, "2026-07-20": 8, "2026-07-21": 8, "2026-07-22": 11, "2026-07-23": 5};
 
 let vistaAtual = 'dia';
 let selecaoAtual = null;
@@ -139,7 +245,7 @@ const CHART_OPTS = {
   responsive: true,
   plugins: { legend: { display: false } },
   scales: {
-    x: { offset: true, ticks: { color: '#94a3b8', font: { size: 11 } }, grid: { display: false } },
+    x: { ticks: { color: '#94a3b8', font: { size: 11 } }, grid: { display: false } },
     y: { min: 0, ticks: { color: '#94a3b8', font: { size: 11 } }, grid: { color: '#334155' } }
   }
 };
@@ -241,19 +347,43 @@ function voltarGlobal() {
 
 // ── Gráfico linha duração ──────────────────────────────────
 const ctxDur = document.getElementById('grafico-duracao').getContext('2d');
-new Chart(ctxDur, {
+let graficoDuracao = new Chart(ctxDur, {
   type: 'line',
   data: { labels: Object.keys(duracaoDia).map(d => formatarData(d)), datasets: [{ data: Object.values(duracaoDia).map(s => Math.round(s/60*10)/10), borderColor: '#f59e0b', backgroundColor: '#f59e0b22', fill: true, tension: 0.4, pointRadius: 4 }] },
-  options: CHART_OPTS
+  options: { ...CHART_OPTS, maintainAspectRatio: false }
 });
 
 // ── Gráfico circular períodos ──────────────────────────────
 const ctxPer = document.getElementById('grafico-periodos').getContext('2d');
-new Chart(ctxPer, {
+const periodoVals = Object.values(periodos);
+const periodoTotal = periodoVals.reduce((a, b) => a + b, 0);
+
+const pluginPctDonut = {
+  id: 'pctDonut',
+  afterDatasetsDraw(chart) {
+    const ctx = chart.ctx;
+    const meta = chart.getDatasetMeta(0);
+    ctx.save();
+    ctx.font = 'bold 13px Segoe UI';
+    ctx.fillStyle = '#fff';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    meta.data.forEach((arc, i) => {
+      const val = periodoVals[i];
+      if (val === 0 || periodoTotal === 0) return;
+      const pct = Math.round(val / periodoTotal * 100);
+      const pos = arc.tooltipPosition();
+      ctx.fillText(pct + '%', pos.x, pos.y);
+    });
+    ctx.restore();
+  }
+};
+
+let graficoPeriodos = new Chart(ctxPer, {
   type: 'doughnut',
   data: {
     labels: Object.keys(periodos),
-    datasets: [{ data: Object.values(periodos), backgroundColor: ['#60a5fa','#f59e0b','#f87171','#a78bfa'], borderWidth: 0 }]
+    datasets: [{ data: periodoVals, backgroundColor: ['#60a5fa','#f59e0b','#f87171','#a78bfa'], borderWidth: 0 }]
   },
   options: {
     responsive: true,
@@ -262,7 +392,8 @@ new Chart(ctxPer, {
       legend: { display: true, position: 'bottom', labels: { color: '#94a3b8', font: { size: 11 }, padding: 12 } },
       tooltip: { callbacks: { label: (ctx) => ` ${ctx.label.replace('\n',' ')}: ${ctx.raw} distrações` } }
     }
-  }
+  },
+  plugins: [pluginPctDonut]
 });
 
 // ── Vista ──────────────────────────────────────────────────
@@ -372,12 +503,90 @@ function formatarData(d) {
   return `${dia}/${mes}/${ano}`;
 }
 
+const svgSun = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>';
+const svgMoon = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>';
+document.getElementById('theme-icon').innerHTML = svgSun;
+
 function toggleTheme() {
   const isLight = document.body.classList.toggle('light');
-  document.querySelector('.toggle-theme').textContent = isLight ? '🌙 Dark Mode' : '☀️ Light Mode';
+  document.getElementById('theme-icon').innerHTML = isLight ? svgMoon : svgSun;
+  document.getElementById('theme-label').textContent = isLight ? 'Dark Mode' : 'Light Mode';
 }
 
 atualizarTabela();
+
+// ── Insights ───────────────────────────────────────────────
+const listaInsights = document.getElementById('insights-lista');
+const svgClock = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>';
+const svgChart = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>';
+const svgCalendar = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>';
+const svgBolt = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>';
+const icones = [svgClock, svgChart, svgCalendar, svgBolt];
+insights.forEach((txt, i) => {
+  const div = document.createElement('div');
+  div.className = 'insight-item';
+  div.innerHTML = `<span class="ico">${icones[i % icones.length]}</span><span>${txt}</span>`;
+  listaInsights.appendChild(div);
+});
+
+// ── Comparação semanal ─────────────────────────────────────
+if (comparacao) {
+  const box = document.getElementById('comparacao-box');
+  const setaN = comparacao.delta_n > 0 ? '↑' : comparacao.delta_n < 0 ? '↓' : '→';
+  const classeN = comparacao.delta_n > 0 ? 'up' : 'down';
+  const setaS = comparacao.delta_seg > 0 ? '↑' : comparacao.delta_seg < 0 ? '↓' : '→';
+  const classeS = comparacao.delta_seg > 0 ? 'up' : 'down';
+  box.innerHTML = `
+    <div class="comp-card">
+      <div class="label">Distrações esta semana</div>
+      <div class="valor">${comparacao.n_atual}</div>
+      <div class="delta ${classeN}">${setaN} ${Math.abs(comparacao.delta_n)}% vs semana anterior</div>
+      <div class="sub">Semana anterior: ${comparacao.n_anterior} distrações</div>
+    </div>
+    <div class="comp-card">
+      <div class="label">Tempo distraído esta semana</div>
+      <div class="valor">${comparacao.min_atual} min</div>
+      <div class="delta ${classeS}">${setaS} ${Math.abs(comparacao.delta_seg)}% vs semana anterior</div>
+      <div class="sub">Semana anterior: ${comparacao.min_anterior} min</div>
+    </div>`;
+}
+
+// ── Meta diária ────────────────────────────────────────────
+function atualizarMeta() {
+  const meta = parseInt(document.getElementById('meta-input').value) || 5;
+  const valores = Object.values(dadosDiaMeta);
+  const diasOk = valores.filter(v => v <= meta).length;
+  const totalDias = valores.length;
+  const pct = totalDias > 0 ? Math.round(diasOk / totalDias * 100) : 0;
+
+  const fill = document.getElementById('meta-fill');
+  fill.style.width = pct + '%';
+  if (pct >= 70) fill.style.background = '#10b981';
+  else if (pct >= 40) fill.style.background = '#f59e0b';
+  else fill.style.background = '#f87171';
+
+  document.getElementById('meta-texto').innerHTML =
+    `Cumpriste a meta em <b>${diasOk} de ${totalDias} dias</b> (${pct}%). ` +
+    (pct >= 70 ? 'Bom trabalho!' : pct >= 40 ? 'Vais no bom caminho.' : 'Há margem para melhorar.');
+}
+atualizarMeta();
+
+// ── Tabs ───────────────────────────────────────────────────
+function mostrarTab(nome, btn) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-' + nome).classList.add('active');
+  // Redimensionar gráficos (Chart.js não desenha bem se o painel estava escondido)
+  setTimeout(() => {
+    if (nome === 'analise') {
+      graficoPrincipal.resize();
+      if (graficoDetalhe) graficoDetalhe.resize();
+      graficoDuracao.resize();
+      graficoPeriodos.resize();
+    }
+  }, 50);
+}
 </script>
 </body>
 </html>
